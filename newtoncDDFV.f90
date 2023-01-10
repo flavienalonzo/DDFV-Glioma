@@ -13,7 +13,7 @@
 !
 ! ******************************************************************************
 ! 
-SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,TKL,TKeLe,etaSSe,ndim,choixf,temps)
+SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
   !--------
   ! Modules
   !--------
@@ -32,7 +32,6 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,TKL,TKeLe,etaSSe,ndim,choixf,temps)
   TYPE(MatCreux)                                   :: A
   Integer, intent(in)                              :: ndim,choixf
   REAL(kind=long), dimension (ndim), intent(in)    :: Cold,Em,Um
-  REAL(kind=long), dimension (Nseg), intent(in)    :: TKL,TKeLe,etaSSe
   REAL(kind=long), dimension (ndim), intent(out)   :: C
   REAL(kind=long), intent(in)                      :: temps
 

@@ -13,7 +13,7 @@
 !
 ! ******************************************************************************
 ! 
-SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
+SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
   !--------
   ! Modules
   !--------
@@ -33,7 +33,6 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
   Integer, intent(in)                              :: ndim,choixf
   REAL(kind=long), dimension (ndim), intent(in)    :: Eold,Um,Vm
   REAL(kind=long), dimension (ndim), intent(out)   :: E
-  REAL(kind=long), dimension (Nseg), intent(in)    :: TKL,TKeLe,etaSSe
   REAL(kind=long), intent(in)                      :: temps
 
   !----------------------------------
@@ -432,12 +431,12 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
            IF ( is <= NsInt) THEN ! sommet is à l'intérieur
               IF (js <= NsInt ) THEN ! sommet js à l'intérieur
                  coef = TKL(iseg) ; coeta = etaSSe(iseg)
-                 RDVT = (V(is) + V(js) + V(iK) + V(jL))/4
+                 RDVT = (Vm(is) + Vm(js) + Vm(iK) + Vm(jL))/4
                  !-------------------------------
                  ! 1. contribution du triangle iK
                  !-------------------------------
-                 dVKL = coef*(ln(V(jL)) - ln(V(iK))) + &
-                      & coeta*(ln(V(js)) - ln(V(is)))
+                 dVKL = coef*(ln(Vm(jL)) - ln(Vm(iK))) + &
+                      & coeta*(ln(Vm(js)) - ln(Vm(is)))
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                  FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
                       & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
@@ -451,8 +450,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                  !-------------------------------
                  ! 2. contribution du triangle jL
                  !-------------------------------
-                 dVKL = coef*(ln(V(iK)) - ln(V(jL))) + &
-                      & coeta * ( ln(V(is)) - ln(V(js)) )
+                 dVKL = coef*(ln(Vm(iK)) - ln(Vm(jL))) + &
+                      & coeta * ( ln(Vm(is)) - ln(Vm(js)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                  FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
                       & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
@@ -467,8 +466,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                  ! 3. contribution du sommet is
                  !-----------------------------
                  coef = TKeLe(iseg)
-                 dVKL = coef*(ln(V(js)) - ln(V(is))) + &
-                      & coeta * ( ln(V(jL)) - ln(V(iK)) )
+                 dVKL = coef*(ln(Vm(js)) - ln(Vm(is))) + &
+                      & coeta * ( ln(Vm(jL)) - ln(Vm(iK)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                  FKL = dVKLplus*( MuCroit(Xk(is)) + MuDecroit(Xk(js)) ) + &
                       & dVKLmoins*( MuCroit(Xk(js)) + MuDecroit(Xk(is)) )
@@ -482,8 +481,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                  !----------------------- -----
                  ! 4. contribution du sommet js
                  !-----------------------------
-                 dVKL = coef*(ln(V(is)) - ln(V(js))) + &
-                      & coeta * ( ln(V(iK)) - ln(V(jL)) )
+                 dVKL = coef*(ln(Vm(is)) - ln(Vm(js))) + &
+                      & coeta * ( ln(Vm(iK)) - ln(Vm(jL)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                  FKL = dVKLplus*( MuCroit(Xk(js)) + MuDecroit(Xk(is)) ) + &
                       & dVKLmoins*( MuCroit(Xk(is)) + MuDecroit(Xk(js)) )
@@ -499,12 +498,12 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                  case (dirichlet)
                     Ubord = Gb(js)
                     coef = TKL(iseg) ; coeta = etaSSe(iseg)
-                    RDVT = (V(is) + Ubord + V(iK) + V(jL))/4
+                    RDVT = (Vm(is) + Ubord + Vm(iK) + Vm(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
-                    dVKL = coef*(ln(V(jL)) - ln(V(iK))) + &
-                         & coeta * ( ln(Ubord) - ln(V(is)) )
+                    dVKL = coef*(ln(Vm(jL)) - ln(Vm(iK))) + &
+                         & coeta * ( ln(Ubord) - ln(Vm(is)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
                          & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
@@ -518,8 +517,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                     !-------------------------------
                     ! 2. contribution du triangle jL
                     !-------------------------------
-                    dVKL = coef*(ln(V(iK)) - ln(V(jL))) + &
-                         & coeta * ( ln(V(is)) - ln(Ubord) )
+                    dVKL = coef*(ln(Vm(iK)) - ln(Vm(jL))) + &
+                         & coeta * ( ln(Vm(is)) - ln(Ubord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
                          & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
@@ -534,8 +533,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                     ! 3. contribution du sommet is
                     !-----------------------------
                     coef = TKeLe(iseg)
-                    dVKL = coef*(ln(Ubord) - ln(V(is))) + &
-                         & coeta * ( ln(V(jL)) - ln(V(iK)) )
+                    dVKL = coef*(ln(Ubord) - ln(Vm(is))) + &
+                         & coeta * ( ln(Vm(jL)) - ln(Vm(iK)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(is)) + MuDecroit(Ubord) ) + &
                          & dVKLmoins*( MuCroit(Ubord) + MuDecroit(Xk(is)) )
@@ -555,12 +554,12 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                  IF (js <= NsInt) THEN
                     Ubord= Gb(is)
                     coef = TKL(iseg) ; coeta = etaSSe(iseg)
-                    RDVT = (Ubord + V(js) + V(iK) + V(jL))/4
+                    RDVT = (Ubord + Vm(js) + Vm(iK) + Vm(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
-                    dVKL = coef*(ln(V(jL)) - ln(V(iK))) + &
-                         & coeta * ( ln(V(js)) - ln(Ubord) )
+                    dVKL = coef*(ln(Vm(jL)) - ln(Vm(iK))) + &
+                         & coeta * ( ln(Vm(js)) - ln(Ubord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
                          & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
@@ -574,8 +573,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                     !-------------------------------
                     ! 2. contribution du triangle jL
                     !-------------------------------
-                    dVKL = coef*(ln(V(iK)) - ln(V(jL))) + &
-                         & coeta * ( ln(Ubord) - ln(V(js)) )
+                    dVKL = coef*(ln(Vm(iK)) - ln(Vm(jL))) + &
+                         & coeta * ( ln(Ubord) - ln(Vm(js)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
                          & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
@@ -590,8 +589,8 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                     ! 3. contribution du sommet js
                     !-----------------------------
                     coef = TKeLe(iseg)
-                    dVKL = coef*(ln(Ubord) - ln(V(js))) + &
-                         & coeta * ( ln(V(iK)) - ln(V(jL)) )
+                    dVKL = coef*(ln(Ubord) - ln(Vm(js))) + &
+                         & coeta * ( ln(Vm(iK)) - ln(Vm(jL)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(js)) + MuDecroit(Ubord) ) + &
                          & dVKLmoins*( MuCroit(Ubord) + MuDecroit(Xk(js)) )
@@ -602,11 +601,11 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                  ELSE ! js se situe encore au bord (un triangle entier sur le bord)
                     Uibord= Gb(is) ; Ujbord= Gb(js)
                     coef = TKL(iseg) ; coeta = etaSSe(iseg)
-                    RDVT = (Uibord + Ujbord + V(iK) + V(jL))/4
+                    RDVT = (Uibord + Ujbord + Vm(iK) + Vm(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
-                    dVKL = coef*(ln(V(jL)) - ln(V(iK))) + &
+                    dVKL = coef*(ln(Vm(jL)) - ln(Vm(iK))) + &
                          & coeta * ( ln(Ujbord) - ln(Uibord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
@@ -621,7 +620,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
                     !-------------------------------
                     ! 2. contribution du triangle jL
                     !-------------------------------
-                    dVKL = coef*(ln(V(iK)) - ln(V(jL))) + &
+                    dVKL = coef*(ln(Vm(iK)) - ln(Vm(jL))) + &
                          & coeta * ( ln(Uibord) - ln(Ujbord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
@@ -645,11 +644,11 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
            iK = NumTVoisSeg(1,iseg) + NsInt; !jL = numero milieu iseg
            Uibord= Gb(is) ; Ujbord= Gb(js) ; Ubord= Gb(iseg + Nbs)
            coef = TKL(iseg) ; coeta = etaSSe(iseg)
-           RDVT = (Uibord + Ujbord + V(iK) + Ubord)/4
+           RDVT = (Uibord + Ujbord + Vm(iK) + Ubord)/4
            !-------------------------------
            ! 1. contribution du triangle iK
            !-------------------------------
-           dVKL = coef*(ln(Ubord) - ln(V(iK))) + &
+           dVKL = coef*(ln(Ubord) - ln(Vm(iK))) + &
                 & coeta * ( ln(Ujbord) - ln(Uibord) )
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
            FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Ubord) ) + &
@@ -664,7 +663,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
            is = NuSeg(1,iseg); js = NuSeg(2,iseg)
            iK = NumTVoisSeg(1,iseg) + NsInt
            coef = TKL(iseg) ; coeta = etaSSe(iseg) ; coefe = TKeLe(iseg)
-           RDVT = (3*(V(is) + V(js))/2 + V(iK))/4
+           RDVT = (3*(Vm(is) + Vm(js))/2 + Vm(iK))/4
            !-------------------------------
            ! 1. contribution du triangle iK
            !-------------------------------
@@ -673,7 +672,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
            ! 2. contribution du sommet is
            !-----------------------------
            coefe = (coefe - (coeta**2)/coef)
-           dVKL = coefe*(ln(V(js)) - ln(V(is)))
+           dVKL = coefe*(ln(Vm(js)) - ln(Vm(is)))
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
            FKL = dVKLplus*( MuCroit(Xk(is)) + MuDecroit(Xk(js)) ) + &
                 & dVKLmoins*( MuCroit(Xk(js)) + MuDecroit(Xk(is)) )
@@ -687,7 +686,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
            !-----------------------------
            ! 3. contribution du sommet js
            !-----------------------------
-           dVKL = coefe*(ln(V(is)) - ln(V(js)))
+           dVKL = coefe*(ln(Vm(is)) - ln(Vm(js)))
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
            FKL = dVKLplus*( MuCroit(Xk(js)) + MuDecroit(Xk(is))) + &
                 & dVKLmoins*( MuCroit(Xk(is)) + MuDecroit(Xk(js)))

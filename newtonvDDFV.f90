@@ -13,7 +13,7 @@
 !
 ! ******************************************************************************
 ! 
-SUBROUTINE NewtonvDDFV(A,Vold,V,Cm,Em,Um,TKL,TKeLe,etaSSe,ndim,choixf,temps)
+SUBROUTINE NewtonvDDFV(A,Vold,V,Cm,Em,Um,ndim,choixf,temps)
   !--------
   ! Modules
   !--------
@@ -32,7 +32,6 @@ SUBROUTINE NewtonvDDFV(A,Vold,V,Cm,Em,Um,TKL,TKeLe,etaSSe,ndim,choixf,temps)
   TYPE(MatCreux)                                   :: A
   Integer, intent(in)                              :: ndim,choixf
   REAL(kind=long), dimension (ndim), intent(in)    :: Vold,Cm,Em,Um
-  REAL(kind=long), dimension (Nseg), intent(in)    :: TKL,TKeLe,etaSSe
   REAL(kind=long), dimension (ndim), intent(out)   :: V
   REAL(kind=long), intent(in)                      :: temps
 
@@ -398,7 +397,7 @@ SUBROUTINE NewtonvDDFV(A,Vold,V,Cm,Em,Um,TKL,TKeLe,etaSSe,ndim,choixf,temps)
      !           print*,'iseg = ', i, 'sum line = ', SUM(A%Tmat(A%IndPL(i): A%IndPL(i+1)-1))
      !    END DO
   END Do
-  C=Xk+Yk
+  V=Xk+Yk
   print*,'fin newtonv'
   !------------
   ! Impressions

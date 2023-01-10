@@ -2,6 +2,114 @@ Module fsource
 
 Contains
 
+   function fu(u,e)
+      use longr
+      implicit none 
+      REAL(kind=long), INTENT(in)     :: e,u
+      REAL(kind=long)  :: fu
+
+      if (u<0) then 
+         fu = 0.D0
+      elseif (u>1) then 
+         fu = 0.D0
+      elseif (u+e>1) then 
+         fu = 0.D0
+      else 
+         fu = u*(1-u-e)
+      end if
+
+   end function
+
+   function deriveefu(u,e)
+      use longr
+      implicit none 
+      REAL(kind=long), INTENT(in)     :: e,u
+      REAL(kind=long)  :: deriveefu
+
+      if (u<0) then 
+         deriveefu = 0.D0
+      elseif (u>1) then 
+         deriveefu = 0.D0
+      elseif (u+e>1) then 
+         deriveefu = 0.D0
+      else 
+         deriveefu = (1-e-2*u)
+      end if
+
+   end function
+
+   function fe(e,u)
+      use longr
+      implicit none 
+      REAL(kind=long), INTENT(in)     :: e,u
+      REAL(kind=long)  :: fe
+
+      if (e<0) then 
+         fe = 0.D0
+      elseif (e>1) then 
+         fe = 0.D0
+      elseif (u+e>1) then 
+         fe = 0.D0
+      else 
+         fe = e*(1-u-e)
+      end if
+
+   end function
+
+   function deriveefe(e,u)
+      use longr
+      implicit none 
+      REAL(kind=long), INTENT(in)     :: e,u
+      REAL(kind=long)  :: deriveefe
+
+      if (e<0) then 
+         deriveefe = 0.D0
+      elseif (e>1) then 
+         deriveefe = 0.D0
+      elseif (u+e>1) then 
+         deriveefe = 0.D0
+      else 
+         deriveefe = (1-u-2*e)
+      end if
+
+   end function
+
+   function Tu(temps,u)
+      use longr 
+      implicit none 
+      REAL(kind=long), INTENT(in)     :: temps,u
+      REAL(kind=long)  :: Tu 
+
+      Tu = -u 
+   end function
+
+   function deriveeTu(temps,u)
+      use longr 
+      implicit none 
+      REAL(kind=long), INTENT(in)     :: temps,u
+      REAL(kind=long)  :: deriveeTu 
+
+      deriveeTu = -1
+   end function
+
+   function hu(c)
+      use longr
+      implicit none
+      REAL(kind=long), INTENT(in)     :: c
+      REAL(kind=long)  :: hu 
+
+      hu = c 
+   end function
+
+   function gv(c)
+      use longr
+      implicit none
+      REAL(kind=long), INTENT(in)     :: c
+      REAL(kind=long)  :: gv
+
+      gv = c 
+   end function
+
   FUNCTION fsourceu(t,x,y,m) ! m represente le choix de probleme
     !--------
     ! Modules

@@ -27,12 +27,12 @@ OBJS	      = longr.o\
 		tenseurv.o\
 		coefftransmv.o\
 		coefftransm.o\
-		newtonvDDFV.o\
 		newtoncDDFV.o\
 		newtoneDDFV.o\
 		newtonuDDFV.o\
+		newtonvDDFV.o\
 		plotvtkmod.o\
-		kellersegelddfv.o
+		gliomaddfv.o
 $(PROG): $(OBJS)
 	$(FORTRAN) $(OBJS) -o $(PROG)
 

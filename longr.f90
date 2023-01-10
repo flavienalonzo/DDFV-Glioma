@@ -7,6 +7,7 @@ module longr
   integer                :: CdtinitialeU, CdtinitialeV,NormU,NormV
   REAL (kind = long)     :: Choixmesh,Choixtri,selec_mesh
   real (kind = long)     :: dt,pi,epsilon,alpha,beta,ubar
+  real (kind = long)     :: rho1,beta1,alpha2,beta2,gamma2,rho3,beta3,alpha4,beta4,gamma4
   real (kind = long)     :: delta, deltau, deltax, deltay, deltaxy, deltaxu, deltayu, deltaxyu
   real (kind = long)     :: CoefDiffV, CoefDiffuAdeg, CoefTranspMu
   CHARACTER (len = 80)   :: nom_mesh,nom_ele, nom_node, nom_edge
