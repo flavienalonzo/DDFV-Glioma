@@ -741,7 +741,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,TKL,TKeLe,etaSSe,ndim,choixf,temps)
   prefix = oldprf
 
 
-END SUBROUTINE NewtonuDDFV
+END SUBROUTINE NewtoneDDFV
 
 
 

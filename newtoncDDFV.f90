@@ -414,7 +414,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,TKL,TKeLe,etaSSe,ndim,choixf,temps)
   prefix = oldprf
 
 
-END SUBROUTINE NewtonvDDFV
+END SUBROUTINE NewtoncDDFV
 
 
 

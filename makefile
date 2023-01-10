@@ -27,8 +27,10 @@ OBJS	      = longr.o\
 		tenseurv.o\
 		coefftransmv.o\
 		coefftransm.o\
-		newtonDDFV.o\
 		newtonvDDFV.o\
+		newtoncDDFV.o\
+		newtoneDDFV.o\
+		newtonuDDFV.o\
 		plotvtkmod.o\
 		kellersegelddfv.o
 $(PROG): $(OBJS)
