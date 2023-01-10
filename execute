@@ -1,0 +1,17 @@
+#!/bin/bash
+
+make clean
+#if [ $? -ne 0 ]; then
+#    echo "Une erreur est survenue lors de l'execution de make clean";
+#    exit 1;
+#fi;
+
+./compil
+#if [ $? -ne 0 ]; then
+#    echo "Une erreur est survenue lors de l'execution de compil";
+#    exit 1;
+#fi;
+
+cd Lestests
+
+./sabor

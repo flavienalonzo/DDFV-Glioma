@@ -28,7 +28,7 @@ module parmmage
   INTEGER,            DIMENSION(:,:), ALLOCATABLE :: NuSeg, NumTVoisSeg
   REAL (kind=long),   DIMENSION(:),   ALLOCATABLE :: SxxK, SyyK, SxyK,Msig,Msige
   REAL (kind=long),   DIMENSION(:),   ALLOCATABLE :: SxxKv, SyyKv, SxyKv
-  REAL (kind=long),   DIMENSION(:),   ALLOCATABLE :: TKL,TKeLe,eta,vTKL,vTKeLe,veta
+  REAL (kind=long),   DIMENSION(:),   ALLOCATABLE :: TKL,TKeLe,eta,vTKL,vTKeLe,vetaSSe,veta
   REAL (kind=long),   DIMENSION(:),   ALLOCATABLE :: AireK, AireD, AireDSommet
   INTEGER,            DIMENSION(:),   ALLOCATABLE :: Num_points, NombvoisSeg
   !-----------------------------------
