@@ -1,0 +1,25 @@
+mv -f objets/*.o .
+mv -f objets/*.mod .
+make
+mv -f *.o objets
+mv -f *.mod objets
+
+ln -f sabor Lestests
+ln -f sabor Lestests/test1
+ln -f sabor Lestests/test2
+ln -f sabor Lestests/test3
+ln -f sabor Lestests/test4
+ln -f sabor Lestests/test5
+ln -f sabor Lestests/test6
+ln -f sabor Lestests/test7
+ln -f sabor Lestests/test8
+ln -f sabor Lestests/test9
+ln -f sabor Lestests/test10
+ln -f sabor Lestests/test11
+
+
+
+
+
+
+
