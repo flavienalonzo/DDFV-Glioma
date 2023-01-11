@@ -93,7 +93,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
            !
            IF ( is <= NsInt) THEN ! sommet is à l'intérieur
               IF (js <= NsInt ) THEN ! sommet js à l'intérieur
-                 coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                 coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                  !-------------------------------
                  ! 1. contribution du triangle iK
                  !-------------------------------
@@ -141,7 +141,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                  !-----------------------------
                  ! 3. contribution du sommet is
                  !-----------------------------
-                 coef = TKeLe(iseg)
+                 coef = eTKeLe(iseg)
                  dVKL = coeta * ( xi(Xk(iK)) - xi(Xk(jL)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                  F(is) = F(is) + coef*(Adegen(Xk(is)) - Adegen(Xk(js))) + &
@@ -188,7 +188,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                  Select case ( Ntyps(js) ) 
                  case (dirichlet)
                     Ubord = Gb(js)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
@@ -228,7 +228,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                     !-----------------------------
                     ! 3. contribution du sommet is
                     !-----------------------------
-                    coef = TKeLe(iseg)
+                    coef = eTKeLe(iseg)
                     dVKL = coeta * ( xi(Xk(iK)) - xi(Xk(jL)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     F(is) = F(is) + coef*(Adegen(Xk(is)) - Adegen(Ubord)) + &
@@ -257,7 +257,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
               case (dirichlet)
                  IF (js <= NsInt) THEN
                     Ubord= Gb(is)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
@@ -297,7 +297,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                     !-----------------------------
                     ! 3. contribution du sommet js
                     !-----------------------------
-                    coef = TKeLe(iseg)
+                    coef = eTKeLe(iseg)
                     dVKL = coeta * ( xi(Xk(jL)) - xi(Xk(iK)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
                     F(js) = F(js) + coef*(Adegen(Xk(js)) - Adegen(Ubord)) + &
@@ -316,7 +316,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                     call ajout(js,jL, CoefAjout, A)
                  ELSE ! js se situe encore au bord (un triangle entier sur le bord)
                     Uibord= Gb(is) ; Ujbord= Gb(js)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
@@ -356,7 +356,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
            is = NuSeg(1,iseg); js = NuSeg(2,iseg)
            iK = NumTVoisSeg(1,iseg) + NsInt; !jL = numero milieu iseg
            Uibord= Gb(is) ; Ujbord= Gb(js) ; Ubord= Gb(iseg + Nbs)
-           coef = TKL(iseg) ; coeta = etaSSe(iseg)
+           coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
            !-------------------------------
            ! 1. contribution du triangle iK
            !-------------------------------
@@ -373,7 +373,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
            !!
            is = NuSeg(1,iseg); js = NuSeg(2,iseg)
            iK = NumTVoisSeg(1,iseg) + NsInt
-           coef = TKL(iseg) ; coeta = etaSSe(iseg) ; coefe = TKeLe(iseg)
+           coef = eTKL(iseg) ; coeta = eetaSSe(iseg) ; coefe = eTKeLe(iseg)
            !-------------------------------
            ! 1. contribution du triangle iK
            !-------------------------------
@@ -430,7 +430,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
            !
            IF ( is <= NsInt) THEN ! sommet is à l'intérieur
               IF (js <= NsInt ) THEN ! sommet js à l'intérieur
-                 coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                 coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                  RDVT = (Vm(is) + Vm(js) + Vm(iK) + Vm(jL))/4
                  !-------------------------------
                  ! 1. contribution du triangle iK
@@ -465,7 +465,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                  !-----------------------------
                  ! 3. contribution du sommet is
                  !-----------------------------
-                 coef = TKeLe(iseg)
+                 coef = eTKeLe(iseg)
                  dVKL = coef*(ln(Vm(js)) - ln(Vm(is))) + &
                       & coeta * ( ln(Vm(jL)) - ln(Vm(iK)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
@@ -497,7 +497,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                  Select case ( Ntyps(js) ) 
                  case (dirichlet)
                     Ubord = Gb(js)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                     RDVT = (Vm(is) + Ubord + Vm(iK) + Vm(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
@@ -532,7 +532,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                     !-----------------------------
                     ! 3. contribution du sommet is
                     !-----------------------------
-                    coef = TKeLe(iseg)
+                    coef = eTKeLe(iseg)
                     dVKL = coef*(ln(Ubord) - ln(Vm(is))) + &
                          & coeta * ( ln(Vm(jL)) - ln(Vm(iK)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
@@ -553,7 +553,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
               case (dirichlet)
                  IF (js <= NsInt) THEN
                     Ubord= Gb(is)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                     RDVT = (Ubord + Vm(js) + Vm(iK) + Vm(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
@@ -588,7 +588,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                     !-----------------------------
                     ! 3. contribution du sommet js
                     !-----------------------------
-                    coef = TKeLe(iseg)
+                    coef = eTKeLe(iseg)
                     dVKL = coef*(ln(Ubord) - ln(Vm(js))) + &
                          & coeta * ( ln(Vm(iK)) - ln(Vm(jL)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
@@ -600,7 +600,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
                     call ajout(js,js,CoefAjout, A )
                  ELSE ! js se situe encore au bord (un triangle entier sur le bord)
                     Uibord= Gb(is) ; Ujbord= Gb(js)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
                     RDVT = (Uibord + Ujbord + Vm(iK) + Vm(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
@@ -643,7 +643,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
            is = NuSeg(1,iseg); js = NuSeg(2,iseg)
            iK = NumTVoisSeg(1,iseg) + NsInt; !jL = numero milieu iseg
            Uibord= Gb(is) ; Ujbord= Gb(js) ; Ubord= Gb(iseg + Nbs)
-           coef = TKL(iseg) ; coeta = etaSSe(iseg)
+           coef = eTKL(iseg) ; coeta = eetaSSe(iseg)
            RDVT = (Uibord + Ujbord + Vm(iK) + Ubord)/4
            !-------------------------------
            ! 1. contribution du triangle iK
@@ -662,7 +662,7 @@ SUBROUTINE NewtoneDDFV(A,Eold,E,Um,Vm,ndim,choixf,temps)
            !!
            is = NuSeg(1,iseg); js = NuSeg(2,iseg)
            iK = NumTVoisSeg(1,iseg) + NsInt
-           coef = TKL(iseg) ; coeta = etaSSe(iseg) ; coefe = TKeLe(iseg)
+           coef = eTKL(iseg) ; coeta = eetaSSe(iseg) ; coefe = eTKeLe(iseg)
            RDVT = (3*(Vm(is) + Vm(js))/2 + Vm(iK))/4
            !-------------------------------
            ! 1. contribution du triangle iK

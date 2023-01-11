@@ -11,7 +11,7 @@
 !     * Ce sous programme lit le fichier uread
 !     * le fichier d'entree
 !****************************************************************
-SUBROUTINE  conditioninitiale(UU,VV,Ndim)
+SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
   !--------
   ! Modules
   !--------
@@ -26,7 +26,7 @@ SUBROUTINE  conditioninitiale(UU,VV,Ndim)
   ! Declaration des arguments
   !--------------------------
   Integer , intent(in) :: Ndim
-  REAL(kind=long), dimension(ndim), intent(inout) ::  UU,VV
+  REAL(kind=long), dimension(ndim), intent(inout) ::  CC,EE,UU,VV
   !----------------------------------
   ! Declaration des variables locales
   !----------------------------------
@@ -48,7 +48,10 @@ SUBROUTINE  conditioninitiale(UU,VV,Ndim)
   !  Lire les conditions initiales
   !----------------------------------
   UU = 0.D0
+  CC = 0.D0
+  EE = 0.D0
   VV = 0.D0
+  
   !!----------------------------------------
   !! lecture de la condition initiale pour U
   !!----------------------------------------

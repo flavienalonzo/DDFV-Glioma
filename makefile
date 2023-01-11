@@ -23,10 +23,7 @@ OBJS	      = longr.o\
 		matrixinitDDFV.o\
 		scmem.o\
 		ubord.o\
-		tenseur.o\
-		tenseurv.o\
-		coefftransmv.o\
-		coefftransm.o\
+		transmis.o\
 		newtoncDDFV.o\
 		newtoneDDFV.o\
 		newtonuDDFV.o\

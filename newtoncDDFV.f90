@@ -93,7 +93,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
            !
            IF ( is <= NsInt) THEN ! sommet is à l'intérieur
               IF (js <= NsInt ) THEN ! sommet js à l'intérieur
-                 coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                 coef = cTKL(iseg) ; coeta = cetaSSe(iseg)
                  RDVT = (Xk(is) + Xk(js) + Xk(iK) + Xk(jL))/4
                  !-------------------------------
                  ! 1. contribution du triangle iK
@@ -134,7 +134,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
                  !-----------------------------
                  ! 3. contribution du sommet is
                  !-----------------------------
-                 coef = TKeLe(iseg)
+                 coef = cTKeLe(iseg)
                  FKL = coef*(ln(Xk(is)) - ln(Xk(js))) + &
                       & coeta * ( ln(Xk(iK)) - ln(Xk(jL)) )
                  F(is) =  F(is) + RDVT * FKL
@@ -173,7 +173,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
                  Select case ( Ntyps(js) ) 
                  case (dirichlet)
                     Cbord = Gb(js)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = cTKL(iseg) ; coeta = cetaSSe(iseg)
                     RDVT = (Xk(is) + Cbord + Xk(iK) + Xk(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
@@ -208,7 +208,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
                     !-----------------------------
                     ! 3. contribution du sommet is
                     !-----------------------------
-                    coef = TKeLe(iseg)
+                    coef = cTKeLe(iseg)
                     FKL = coef*(ln(Xk(is)) - ln(Cbord)) + &
                          & coeta * ( ln(Xk(iK)) - ln(Xk(jL)) )
                     F(is) = F(is) + RDVT * FKL
@@ -233,7 +233,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
               case (dirichlet)
                  IF (js <= NsInt) THEN
                     Cbord= Gb(is)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = cTKL(iseg) ; coeta = cetaSSe(iseg)
                     RDVT = (Cbord + Xk(js) + Xk(iK) + Xk(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
@@ -268,7 +268,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
                     !-----------------------------
                     ! 3. contribution du sommet js
                     !-----------------------------
-                    coef = TKeLe(iseg)
+                    coef = cTKeLe(iseg)
                     FKL = coef*(ln(Xk(js)) - ln(Cbord)) + &
                          & coeta * ( ln(Xk(jL)) - ln(Xk(iK)) )
                     F(js) = F(js) + RDVT * FKL
@@ -283,7 +283,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
                     call ajout(js,jL, CoefAjout, A)
                  ELSE ! js se situe encore au bord (un triangle entier sur le bord)
                     Cibord= Gb(is) ; Cjbord= Gb(js)
-                    coef = TKL(iseg) ; coeta = etaSSe(iseg)
+                    coef = cTKL(iseg) ; coeta = cetaSSe(iseg)
                     RDVT = (Cibord + Cjbord + Xk(iK) + Xk(jL))/4
                     !-------------------------------
                     ! 1. contribution du triangle iK
@@ -320,7 +320,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
            is = NuSeg(1,iseg); js = NuSeg(2,iseg)
            iK = NumTVoisSeg(1,iseg) + NsInt; !jL = numero milieu iseg
            Cibord= Gb(is) ; Cjbord= Gb(js) ; Cbord= Gb(iseg + Nbs)
-           coef = TKL(iseg) ; coeta = etaSSe(iseg)
+           coef = cTKL(iseg) ; coeta = cetaSSe(iseg)
            RDVT = (Cibord + Cjbord + Xk(iK) + Cbord)/4
            !-------------------------------
            ! 1. contribution du triangle iK
@@ -344,7 +344,7 @@ SUBROUTINE NewtoncDDFV(A,Cold,C,Em,Um,ndim,choixf,temps)
            ! 2. contribution du sommet is
            !-----------------------------
            RDVT = (3*(Xk(is) + Xk(js))/2 + Xk(iK))/4
-           coef = TKL(iseg) ; coeta = etaSSe(iseg) ; coefe = TKeLe(iseg)
+           coef = cTKL(iseg) ; coeta = cetaSSe(iseg) ; coefe = cTKeLe(iseg)
            coefe = coefe - (coeta**2)/coef
            FKL = coefe*(ln(Xk(is)) - ln(Xk(js)))
            F(is) = F(is) + RDVT * FKL

@@ -8,17 +8,17 @@
 !     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!@!!!@!!!!!!!!!!!-*
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
 !------------------------------------------------------------
-!     * Programme resoud le système de chimiotaxie anisotropic
+!     * Programme resoud le systï¿½me de chimiotaxie anisotropic
 !       sur un domaine qlq par la methode des DDFV:
 !
-!      Probleme  traité est le suivant : 
+!      Probleme  traitï¿½ est le suivant : 
 !      Dt U - Div( S(x) nabla A(u) ) + div(S(x) X(u) nabla V) = 0    dans omega
 !      Dt V - Div( D(x) nabla V) = a U-b V
 !               DA(u).n = D V.n=0        sur gamma_1
 !               u=udb, v=vdb             sur gamma_2
 !
 !----------------
-! La méthode utilise le maillage dual de Vernoi. 
+! La mï¿½thode utilise le maillage dual de Vernoi. 
 !******************************************************************************
 PROGRAM GLIOMADDFV
   
@@ -39,10 +39,11 @@ PROGRAM GLIOMADDFV
   !==================================
   ! Declaration des variables locales
   !==================================
-  INTEGER         :: jt, i, j, is,ii,niter,y
-  REAL(kind=long), DIMENSION(:),   Pointer  :: Uold, U, Vold, V, Uexacte
-  REAL(kind = long)                         :: Tempsactuel
-  REAL(kind=long), DIMENSION(:),ALLOCATABLE :: NormL1U, NormL1V
+  INTEGER         :: jt, i, j, is, ii, niter, y, m
+  REAL(kind=long), DIMENSION(:),   Pointer  :: Uold, U, Vold, V, Cold, C, Eold, E, Um, Vm, Cm, Em
+  REAL(kind = long)                         :: Tempsactuel, erreur_iteratif
+  REAL(kind=long), DIMENSION(:),ALLOCATABLE :: NormL1U, NormL1C, NormL1E, NormL1V
+  logical         :: cvge
   CHARACTER(20) :: chaine
   real :: start, finish
   !===================
@@ -59,15 +60,15 @@ PROGRAM GLIOMADDFV
 
   CALL maillage                !* lecture du maillage
 
-  CALL meshtools               !* Mise à jour du maillage
+  CALL meshtools               !* Mise ï¿½ jour du maillage
   !------------------------------------
   ! Nombre d'inconnues dans le probleme
   !------------------------------------
   IF (ChoixCdtBord == Neumann) NsInt = NbS
   NbInc = NsInt + Nbt
   print*,'NbInc = ',NbInc
-  ALLOCATE(Uold(NbInc), U(NbInc), Vold(NbInc), V(NbInc), Uexacte(NbInc))
-  ALLOCATE(Cold(NbInc), C(NbInc), Eold(NbInc), E(NbInc))
+  ALLOCATE(Uold(NbInc), U(NbInc), Vold(NbInc), V(NbInc), Um(NbInc), Vm(NbInc))
+  ALLOCATE(Cold(NbInc), C(NbInc), Eold(NbInc), E(NbInc), Cm(NbInc), Em(NbInc))
   ALLOCATE( Gb(Nbs + Nseg) ) ! Gb est de taille  Nbs - NsInt
   !---------------------------------------------
   ! Condition initiale et conditions aux limites
@@ -76,7 +77,7 @@ PROGRAM GLIOMADDFV
   CALL Conditioninitiale(C,E,U,V,NbInc)
   write(*,*)'cdt initiale ok'
   !---------------------------------------
-  ! Allocation de la structure des données
+  ! Allocation de la structure des donnï¿½es
   !---------------------------------------
   IF (Choixdt == 0) dt = 0.1*(maxval(Msig))**2
   print*,'dt    =',dt
@@ -91,25 +92,10 @@ PROGRAM GLIOMADDFV
   !----------------------------------------------
   !CALL scmem(AU, choixpb, dt)
   !-----------------------------------------
-  ! Coefficients de transmissibilités pour U
+  ! Coefficients de transmissibilites pour u, c, e et v
   !-----------------------------------------
-  CALL tenseur(Choixanisu)
-  CALL coefftransm
-  !-----------------------------------------
-  ! Coefficients de transmissibilités pour V
-  !-----------------------------------------
-  CALL tenseurv(Choixanisv)
-  CALL coefftransmv
-    !-----------------------------------------
-  ! Coefficients de transmissibilités pour C
-  !-----------------------------------------
-  CALL tenseur(Choixanisc)
-  CALL coefftransm
-  !-----------------------------------------
-  ! Coefficients de transmissibilités pour E
-  !-----------------------------------------
-  CALL tenseurv(Choixanise)
-  CALL coefftransmv
+  CALL transmis(Choixanisu,Choixanisc,Choixanise,Choixanisv)
+ 
   !! -------------
   !! Temps initial 
   !! -------------
@@ -138,7 +124,7 @@ PROGRAM GLIOMADDFV
      print*,' Min solution calculee E   : ', MINVAL(E)
      Tempsactuel = Tempsactuel + dt
      ! -------------------------------------
-     ! Norme L1 de U et V à chaque iteration
+     ! Norme L1 de U et V ï¿½ chaque iteration
      ! -------------------------------------
      DO is = 1, NsInt
         NormL1U(niter) = NormL1U(niter) + AireDsommet(is)*U(is)/2
@@ -169,35 +155,35 @@ PROGRAM GLIOMADDFV
 
      ! Algorithme iteratif en m
      Um = Uold; Vm = Vold; Cm = Cold; Em = Eold
-     cvge = 0; m = 0
-     Do while ((cvge .ne. 0) .AND. (m < mitermax))
+     cvge = .false.; m = 0; mitermax = 1
+     Do while ((cvge .neqv. .false.) .AND. (m < mitermax))
         !--------------------------------------------------
         ! Resolution du systeme nonlineaire pour calculer U
         !--------------------------------------------------
         ! Methode de Newton
-        CALL NewtoncDDFV(AC,Cold,C,Em,Um,cTKL,cTKeLe,cetaSSe,NbInc,choixpb,Tempsactuel)
-        CALL NewtonuDDFV(AU,Uold,U,C,Em,uTKL,uTKeLe,uetaSSe,NbInc,choixpb,Tempsactuel)
-        CALL NewtonvDDFV(AV,Vold,V,C,Em,U,vTKL,vTKeLe,vetaSSe,NbInc,choixpb,Tempsactuel)
-        CALL NewtoneDDFV(AE,Eold,E,U,V,eTKL,eTKeLe,eetaSSe,NbInc,choixpb,Tempsactuel)
+        CALL NewtoncDDFV(AC,Cold,C,Em,Um,NbInc,choixpb,Tempsactuel)
+        CALL NewtonuDDFV(AU,Uold,U,C,Em,NbInc,choixpb,Tempsactuel)
+        CALL NewtonvDDFV(AV,Vold,V,C,Em,U,NbInc,choixpb,Tempsactuel)
+        CALL NewtoneDDFV(AE,Eold,E,U,V,NbInc,choixpb,Tempsactuel)
         
         ! Calcul de l'erreur entre deux iterees,
-        erreur_iterratif = sqrt(dot_product(Cm-C,Cm-C)) + sqrt(dot_product(Em-E,Em-E))&
+        erreur_iteratif = sqrt(dot_product(Cm-C,Cm-C)) + sqrt(dot_product(Em-E,Em-E))&
              & + sqrt(dot_product(Um-U,Um-U))+sqrt(dot_product(Vm-V,Vm-V))
-        If (erreur_iterratif < Tolerenceiterative) cvge = 1
+        If (erreur_iteratif < Tolerenceiterative) cvge = .true.
         Um = U; Vm = V; Cm = C; Em = E
         m = m+1
      end Do
      !------------------------------------------
      ! Erreur L^infinie entre U approchee et Uex
      !------------------------------------------
-     DO is = 1, NsInt
-        Uexacte(is) = gbord(Tempsactuel,coordS(1,is), CoordS(2,is), Choixgb) ! solution exacte
-     END DO
-     DO jt = 1, Nbt
-        Uexacte(jt+ NsInt) = gbord(Tempsactuel,CoordK(1,jt), CoordK(2,jt), Choixgb) ! solution exacte
-     END DO
-     WRITE(* ,*)' Erreur infinie U-Uexacte =  : ', MAXVAL(ABS(U - Uexacte))
-     WRITE(* ,*)' Erreur infinie relative  =  : ', MAXVAL(ABS(U - Uexacte))/MAXVAL(ABS(Uexacte))
+     !DO is = 1, NsInt
+     !   Uexacte(is) = gbord(Tempsactuel,coordS(1,is), CoordS(2,is), Choixgb) ! solution exacte
+     !END DO
+     !DO jt = 1, Nbt
+     !   Uexacte(jt+ NsInt) = gbord(Tempsactuel,CoordK(1,jt), CoordK(2,jt), Choixgb) ! solution exacte
+     !END DO
+     !WRITE(* ,*)' Erreur infinie U-Uexacte =  : ', MAXVAL(ABS(U - Uexacte))
+     !WRITE(* ,*)' Erreur infinie relative  =  : ', MAXVAL(ABS(U - Uexacte))/MAXVAL(ABS(Uexacte))
 
      !-------------------
      ! Affichage resultat
@@ -237,11 +223,13 @@ PROGRAM GLIOMADDFV
   !!
   DO i = 1, nbitertemps 
      WRITE(NormU,211) (i-1)*dt, NormL1U(i)
+     WRITE(NormC,211) (i-1)*dt, NormL1C(i)
+     WRITE(NormE,211) (i-1)*dt, NormL1E(i)
      WRITE(NormV,211) (i-1)*dt, NormL1V(i)
   END DO
 
 !!$  !------------------------------------------
-!!$  ! Erreur L^infinie entre U approchée et Uex
+!!$  ! Erreur L^infinie entre U approchï¿½e et Uex
 !!$  !-------------------------------------------
 !!$  DO is = 1, NsInt
 !!$     Uexacte(is) = gbord(dt,coordS(1,is),  CoordS(2,is), Choixgb) ! solution exacte
@@ -257,8 +245,9 @@ PROGRAM GLIOMADDFV
   close (uprint)
   close (usave)
   close (upoints)
-  Deallocate(TKL,TKeLe,eta,AireD,AireDsommet,U,Uold,Gb)
-  Deallocate(vTKL,vTKeLe,veta,NormL1U,NormL1V)
+  Deallocate(uTKL,uTKeLe,uetaSSe,cTKL,cTKeLe,cetaSSe,eTKL,eTKeLe,eetaSSe,vTKL,vTKeLe,vetaSSe)
+  deallocate(AireD,AireDsommet,U,Uold,C,Cold,E,Eold,V,Vold,Gb)
+  Deallocate(NormL1U,NormL1C,NormL1E,NormL1V)
   Deallocate(AireK,NsigK,NsigeKe,Msig,Msige)
   call cpu_time(finish)
   print*,'finish',start,finish,finish-start
