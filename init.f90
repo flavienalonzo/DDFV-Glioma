@@ -45,6 +45,7 @@ SUBROUTINE  INIT
   cdtinitialeU =  22  ! fichier de sauvgarde a un instant donne
   cdtinitialeV =  23  ! fichier de sauvgarde a un instant donne
 
+  print*,'UwU 48'
   OPEN (uread, file = 'UREAD'  ,  status = 'old') 
   OPEN (uprint, file = 'UPRINT',  status = 'unknown')
   OPEN (NormU, file = 'NormU'  ,  status = 'unknown')
@@ -76,6 +77,7 @@ SUBROUTINE  INIT
   CALL prvari (uprint, 'ChoixBord                       : ', ChoixBord)
   IF (ChoixBord /= 0 .AND. ChoixBord /= 1) THEN
      print*,'Erreur ChoixBord'
+     print*, ChoixBord
      stop
   END IF
   IF (ChoixBord == 1) THEN
@@ -122,6 +124,10 @@ SUBROUTINE  INIT
   CALL prvarr (uprint, 'TolerenceNewton                 : ', TolerenceNewton)
 
   buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  Tolerenceiterative
+  CALL prvarr (uprint, 'Tolerenceiterative              : ', Tolerenceiterative)
+
+  buffer=lireligne(uread)
   READ(buffer, *, err = 10)  kitermax
   CALL prvari (uprint, 'ItermaxNewton                   : ', kitermax)
 
@@ -131,7 +137,7 @@ SUBROUTINE  INIT
   dossiermaillage=trim(adjustl(buffer))
   !print*,'dossiermaillage=',dossiermaillage
   CALL prchar (uprint, 'Dossier Maillage                : '//dossiermaillage)
-
+  print*, 'UwU 140'
   If (selec_mesh == 0) THEN
      buffer=lireligne(uread)
      READ(buffer, *, err = 10) Maillage_Format
@@ -154,8 +160,11 @@ SUBROUTINE  INIT
         nom_edge=trim(dossiermaillage)//trim(nom_edge)
         CALL prchar (uprint, 'Fichier des segments           : '//nom_edge) 
 
+        buffer=lireligne(uread)
      CASE (2)  ! maillage Boyer (Benchmark)
-
+      buffer=lireligne(uread)
+      buffer=lireligne(uread)
+      buffer=lireligne(uread)
         buffer=lireligne(uread)
         READ(buffer, *, err = 10 )  nom_mesh
         nom_mesh=trim(dossiermaillage)//trim(nom_mesh)
@@ -313,18 +322,53 @@ SUBROUTINE  INIT
      stop
   END If
 
+
   buffer=lireligne(uread)
+  print*, buffer
   READ(buffer, *, err = 10)  CoefDiffV
   CALL prvarr (uprint, 'CoefDiffV                       : ', CoefDiffV)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10)  alpha
-  CALL prvarr (uprint, 'alpha                           : ', alpha)
+  READ(buffer, *, err = 10)  rho1
+  CALL prvarr (uprint, 'rho1                           : ', rho1)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10)  beta
-  CALL prvarr (uprint, 'beta                            : ', beta)
+  READ(buffer, *, err = 10)  beta1
+  CALL prvarr (uprint, 'beta1                            : ', beta1)
 
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  alpha2
+  CALL prvarr (uprint, 'alpha2                           : ', alpha2)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  beta2
+  CALL prvarr (uprint, 'beta2                            : ', beta2)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  gamma2
+  CALL prvarr (uprint, 'gamma2                            : ', gamma2)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  rho3
+  CALL prvarr (uprint, 'rho3                           : ', rho3)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  beta3
+  CALL prvarr (uprint, 'beta3                            : ', beta3)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  alpha4
+  CALL prvarr (uprint, 'alpha4                           : ', alpha4)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  beta4
+  CALL prvarr (uprint, 'beta4                            : ', beta4)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  gamma4
+  CALL prvarr (uprint, 'gamma4                            : ', gamma4)
+
+  print*, 'UwU 368'
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) choixpb
   CALL prvari (uprint, 'choixpb                         : ', choixpb)
@@ -338,58 +382,24 @@ SUBROUTINE  INIT
   CALL prvari (uprint, 'choixanisu                      : ', choixanisu)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10) choixkscalaireu
-  CALL prvari (uprint, 'choixkscalaireu                 : ', choixkscalaireu)
+  READ(buffer, *, err = 10) choixanisc
+  CALL prvari (uprint, 'choixanisc                      : ', choixanisc)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltau
-  CALL prvarr (uprint, 'deltau                          : ', deltau)
+  READ(buffer, *, err = 10) choixanise
+  CALL prvari (uprint, 'choixanise                      : ', choixanise)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltaxu
-  CALL prvarr (uprint, 'deltaxu                         : ', deltaxu)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltayu
-  CALL prvarr (uprint, 'deltayu                         : ', deltayu)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltaxyu
-  CALL prvarr (uprint, 'deltaxyu                        : ', deltaxyu)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) choixanis
-  CALL prvari (uprint, 'choixanis                       : ', choixanis)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) choixkscalaire
-  CALL prvari (uprint, 'choixkscalaire                  : ', choixkscalaire)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) delta
-  CALL prvarr (uprint, 'delta                           : ', delta)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltax
-  CALL prvarr (uprint, 'deltax                          : ', deltax)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltay
-  CALL prvarr (uprint, 'deltay                          : ', deltay)
-
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) deltaxy
-  CALL prvarr (uprint, 'deltaxy                         : ', deltaxy)
+  READ(buffer, *, err = 10) choixanisv
+  CALL prvari (uprint, 'choixanisv                      : ', choixanisv)
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) choixAdeg
   CALL prvari (uprint, 'choixAdeg                       : ', choixAdeg)
 
-
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) CoefDiffuAdeg
   CALL prvarr (uprint, 'CoefDiffuAdeg                   : ', CoefDiffuAdeg)
-
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) choixMu
@@ -432,6 +442,7 @@ SUBROUTINE  INIT
   READ(buffer, *, err = 10) ntarr
   call prvari (uprint, 'ntarr                             : ',ntarr)
 
+  print*, 'UwU 443'
   Allocate (Tempstock(ntarr))
 
   buffer=lireligne(uread)

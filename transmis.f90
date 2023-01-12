@@ -62,7 +62,11 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           z(2) = (3*z(2) + y(1))/4.
           !!
        END IF
-       !-------------------------------------------
+     !-------------------------------------------
+     ! On approxime les matrices de diffusion par 
+     ! S^D = 1/AireD*\int_D S(x)dx
+     !----------------------------------------
+     !
        Select case (choixaniu)
        case(1) 
           !-----------
@@ -112,49 +116,64 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
     DO iseg = 1,Nseg
         !
         ! les transmissibiltés de diffusion TKL
+        ! TKL = 0.5*Msig^2/AireD*S^D*NsigK.NsigK
         !--------------------------------------
         !
         uTKL(iseg) = ( (uSxxK(iseg)*NsigK(1,iseg)+uSxyK(iseg) *NsigK(2,iseg) )*NsigK(1,iseg)&
-             & + ( uSxyK(iseg)*NsigK(1,iseg)+uSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))/(2*AireD(iseg))
+             & + ( uSxyK(iseg)*NsigK(1,iseg)+uSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))* &
+             &(Msig(iseg)**2)/(2*AireD(iseg))
 
         cTKL(iseg) = ( (cSxxK(iseg)*NsigK(1,iseg)+cSxyK(iseg) *NsigK(2,iseg) )*NsigK(1,iseg)&
-             & + ( cSxyK(iseg)*NsigK(1,iseg)+cSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))/(2*AireD(iseg))
+             & + ( cSxyK(iseg)*NsigK(1,iseg)+cSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))* &
+             &(Msig(iseg)**2)/(2*AireD(iseg))
 
         eTKL(iseg) = ( (eSxxK(iseg)*NsigK(1,iseg)+eSxyK(iseg) *NsigK(2,iseg) )*NsigK(1,iseg)&
-             & + ( eSxyK(iseg)*NsigK(1,iseg)+eSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))/(2*AireD(iseg))
+             & + ( eSxyK(iseg)*NsigK(1,iseg)+eSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))* &
+             &(Msig(iseg)**2)/(2*AireD(iseg))
 
         vTKL(iseg) = ( (vSxxK(iseg)*NsigK(1,iseg)+vSxyK(iseg) *NsigK(2,iseg) )*NsigK(1,iseg)&
-             & + ( vSxyK(iseg)*NsigK(1,iseg)+vSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))/(2*AireD(iseg))
+             & + ( vSxyK(iseg)*NsigK(1,iseg)+vSyyK(iseg)*NsigK(2,iseg) )*NsigK(2,iseg))* &
+             &(Msig(iseg)**2)/(2*AireD(iseg))
         !
         ! les transmissibiltés de diffusion TK*L*
+        !  TKeLe = 0.5*Msige^2/AireD*S^D*NsigeKe.NsigeKe
         !----------------------------------------
         !
         uTKeLe(iseg) = ( (uSxxK(iseg)*NsigeKe(1,iseg)+uSxyK(iseg) *NsigeKe(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( uSxyK(iseg)*NsigeKe(1,iseg)+uSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( uSxyK(iseg)*NsigeKe(1,iseg)+uSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msige(iseg)**2)/(2*AireD(iseg))
 
         cTKeLe(iseg) = ( (cSxxK(iseg)*NsigeKe(1,iseg)+cSxyK(iseg) *NsigeKe(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( cSxyK(iseg)*NsigeKe(1,iseg)+cSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( cSxyK(iseg)*NsigeKe(1,iseg)+cSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msige(iseg)**2)/(2*AireD(iseg))
 
         eTKeLe(iseg) = ( (eSxxK(iseg)*NsigeKe(1,iseg)+eSxyK(iseg) *NsigeKe(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( eSxyK(iseg)*NsigeKe(1,iseg)+eSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( eSxyK(iseg)*NsigeKe(1,iseg)+eSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msige(iseg)**2)/(2*AireD(iseg))
 
         vTKeLe(iseg) = ( (vSxxK(iseg)*NsigeKe(1,iseg)+vSxyK(iseg) *NsigeKe(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( vSxyK(iseg)*NsigeKe(1,iseg)+vSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( vSxyK(iseg)*NsigeKe(1,iseg)+vSyyK(iseg)*NsigeKe(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msige(iseg)**2)/(2*AireD(iseg))
         !
         ! les transmissibiltés de convection eta_sigma,sigma*
+        ! etaSSe = 0.5*Msig*Msige/AireD*S^D*NsigK.NsigeKe
         !----------------------------------------------------
         !
         uetaSSe(iseg) = ( (uSxxK(iseg)*NsigK(1,iseg)+uSxyK(iseg) *NsigK(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( uSxyK(iseg)*NsigK(1,iseg)+uSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( uSxyK(iseg)*NsigK(1,iseg)+uSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msig(iseg)*Msige(iseg))/(2*AireD(iseg))
 
         cetaSSe(iseg) = ( (cSxxK(iseg)*NsigK(1,iseg)+cSxyK(iseg) *NsigK(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( cSxyK(iseg)*NsigK(1,iseg)+cSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( cSxyK(iseg)*NsigK(1,iseg)+cSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msig(iseg)*Msige(iseg))/(2*AireD(iseg))
 
         eetaSSe(iseg) = ( (eSxxK(iseg)*NsigK(1,iseg)+eSxyK(iseg) *NsigK(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( eSxyK(iseg)*NsigK(1,iseg)+eSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( eSxyK(iseg)*NsigK(1,iseg)+eSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msig(iseg)*Msige(iseg))/(2*AireD(iseg))
 
         vetaSSe(iseg) = ( (vSxxK(iseg)*NsigK(1,iseg)+vSxyK(iseg) *NsigK(2,iseg) )*NsigeKe(1,iseg)&
-             & + ( vSxyK(iseg)*NsigK(1,iseg)+vSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))/(2*AireD(iseg))
+             & + ( vSxyK(iseg)*NsigK(1,iseg)+vSyyK(iseg)*NsigK(2,iseg) )*NsigeKe(2,iseg))* &
+             &(Msig(iseg)*Msige(iseg))/(2*AireD(iseg))
         !
      END DO
   
