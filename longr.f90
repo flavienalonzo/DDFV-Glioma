@@ -20,7 +20,7 @@ module longr
   Integer :: ntarr, Nb_points, kitermax, mitermax
   REAL (kind=long), dimension(:), allocatable :: Tempstock, Xpoints, Ypoints
   Integer :: CLgauche, CLdroite, CLbas, CLhaut
-  Integer :: TypecondinitialeU, TypecondinitialeV, Nb_iter_visit
+  Integer :: TypecondinitialeU, TypecondinitialeC, TypecondinitialeE, TypecondinitialeV, Nb_iter_visit
   REAL (kind = long)     :: Tolerencegradient, TolerenceNewton, tolerenceiterative, CFDT
   
 end module longr

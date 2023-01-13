@@ -3,9 +3,9 @@
 !            ************************************
 !****************************************************************
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
-!     *-!!!!!!!!!!!!!@!!@!!!@!!!!!!@!!@!!!@!!!!!!!!!!!-*
-!     *-!!!!!!!!!@@@@@!!@!!!@!!@@@@@!!@!!!@!!!!!!!!!!!-*
-!     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!@!!!@!!!!!!!!!!!-*
+!     *-!!!!!!!!!!!!!@!!@!!!@!!!!!!@!!!!!!@!!!!!!!!!!!-*
+!     *-!!!!!!!!!@@@@@!!@!!!@!!@@@@@!!@@@@@!!!!!!!!!!!-*
+!     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!!!!!@!!!!!!!!!!!-*
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
 !------------------------------------------------------------
 !     * Ce sous programme lit le fichier uread
@@ -33,8 +33,9 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
   CHARACTER(len=6)          :: oldprf
   REAL(kind = long)         :: xmin, xmax, ymin, ymax, uinit, vinit
   CHARACTER(len=len_buffer) :: buffer
-  INTEGER                   :: Ndivu, Ndivv, jt, ii, is, ip, i, sizecdtU
+  INTEGER                   :: Ndivu, Ndivv, jt, ii, is, ip, i, sizecdtU, m
   REAL(kind=long), dimension(2) :: S1, S2, S3, v0, v1, v2
+  integer, dimension(NsInt)   :: NbTpS
   REAL(kind=long) :: dist, distmin
   LOGICAL :: trouver
 
@@ -51,112 +52,208 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
   CC = 0.D0
   EE = 0.D0
   VV = 0.D0
+
+  !!----------------------------------------
+  !! Condition initiale pour U
+  !!----------------------------------------
   
-  !!----------------------------------------
-  !! lecture de la condition initiale pour U
-  !!----------------------------------------
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) TypecondinitialeU
-  CALL prvari (uprint, 'TypecondinitialeU       : ', TypecondinitialeU)
   !!
   Select case ( TypecondinitialeU )
      !
   case(0) 
-     buffer=lireligne(uread)
-     READ(buffer, *, err = 10) Ndivu
-     CALL prvari (uprint, 'NdivU                : ', Ndivu)
-     print*,'size(UU) cdt initiale =',size(UU)
-     !!
-     DO ii = 1, Ndivu 
-        buffer = lireligne(uread)
-        READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, uinit
-        print*, xmin, xmax, ymin, ymax, uinit
-        DO is = 1, NsInt
-           if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
-                & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
-                & UU(is)= uinit
-        END DO
-        DO jt = 1, Nbt
-           if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
-                & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
-                & UU(jt + NsInt)= uinit
-        END DO
-     END DO
+   !  buffer=lireligne(uread)
+   !  READ(buffer, *, err = 10) Ndivu
+   !  CALL prvari (uprint, 'NdivU                : ', Ndivu)
+   !  print*,'size(UU) cdt initiale =',size(UU)
+   !  !!
+   !  DO ii = 1, Ndivu 
+   !     buffer = lireligne(uread)
+   !     READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, uinit
+   !     print*, xmin, xmax, ymin, ymax, uinit
+   !     DO is = 1, NsInt
+   !        if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
+   !              & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
+   !             & UU(is)= uinit
+   !     END DO
+   !     DO jt = 1, Nbt
+   !        if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
+   !             & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
+   !             & UU(jt + NsInt)= uinit
+   !     END DO
+   !  END DO
 
-  case(1) 
-     ! condition initiale faite par gbord
-     !
-     DO is = 1, NsInt
-        UU(is) = gbord(0.D0, CoordS(1,is), CoordS(2,is), choixgb)
-     END DO
-     DO jt = 1, Nbt
-        UU(jt + NsInt) = gbord(0.D0, CoordK(1,jt), CoordK(2,jt), choixgb)
-     END DO
+   case(1)
+      NbTpS = 0
+      DO jt = 1,Nbt
+         if (TypS(1,jt) == 100) then
+            UU(jt + NsInt) = 0.D0
+         elseif (TypS(1,jt) == 200) then
+            UU(jt + NsInt) = 0.D0
+         elseif (TypS(1,jt) == 300) then
+            UU(jt + NsInt) = 1.D-1
+         elseif (TypS(1,jt) == 400) then
+            UU(jt + NsInt) = 4.D-1
+         elseif (TypS(1,jt) == 500) then
+            UU(jt + NsInt) = 0.6*exp(-20*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+         end if
+         Do m = 1, typegeomaille
+            UU(NuSoK (m,jt)) = UU(NuSoK (m,jt)) + UU(jt + NsInt)
+            NbTpS(NuSoK (m,jt)) = NbTpS(NuSoK (m,jt)) + 1
+         END Do
+      END DO
+      DO is = 1, NsInt
+         UU(is) = UU(is)/NbTpS(is)
+      END DO
 
-  case(2) ! condition initiale aleartoire 
-
-     call random_number(UU)
-
-  case(3) ! condition initiale faite par une condition existante
-     DO jt = 1, NbInc
-        READ(cdtinitialeU,"(f30.20)", err = 12) UU(jt)
-     END DO
-     print*,'Donne le numéro à partir duquel on numérote les résultat d''afficahge :'
-     print*,'Ce numéro est accessible du fichier UPRINT derniere ligne :'
-     read *, affichage
   end Select
+
+  !!----------------------------------------
+  !! lecture de la condition initiale pour C
+  !!----------------------------------------
+  !!
+  Select case ( TypecondinitialeC )
+   !
+case(0) 
+   !buffer=lireligne(uread)
+   !READ(buffer, *, err = 10) Ndivv
+   !CALL prvari (uprint, 'NdivV                : ', Ndivv)
+   !print*,'size(VV) cdt initiale =',size(VV)
+   !!
+   !DO ii = 1, Ndivv 
+   !   buffer = lireligne(uread)
+   !   READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, vinit
+   !   print*, xmin, xmax, ymin, ymax, vinit
+   !   DO is = 1, NsInt
+   !      if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
+   !           & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
+   !           & VV(is)= vinit
+   !   END DO
+   !   DO jt = 1, Nbt
+   !      if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
+   !           & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
+   !           & VV(jt + NsInt)= vinit
+   !   END DO
+   !END DO
+
+case(1) 
+   !
+   NbTpS = 0
+   DO jt = 1, Nbt
+      if (TypS(1,jt) == 100) then
+         CC(jt + NsInt) = 148.D0
+      elseif (TypS(1,jt) == 200) then 
+         CC(jt + NsInt) = 148.D0
+      elseif (TypS(1,jt) == 300) then
+         CC(jt + NsInt) = 0.D0
+      elseif (TypS(1,jt) == 400) then
+         CC(jt + NsInt) = 0.D0
+      elseif (TypS(1,jt) == 500) then
+         CC(jt + NsInt) = 0.D0
+      end if
+      Do m = 1, typegeomaille
+         CC(NuSoK (m,jt)) = CC(NuSoK (m,jt)) + CC(jt + NsInt)
+         NbTpS(NuSoK (m,jt)) = NbTpS(NuSoK (m,jt)) + 1
+      END Do
+   END DO
+   DO is = 1, NsInt
+      CC(is) = CC(is)/NbTpS(is)
+   END DO
+end select
+
+  !!----------------------------------------
+  !! lecture de la condition initiale pour E
+  !!----------------------------------------
+  !!
+
+Select case ( TypecondinitialeE )
+   !
+case(0) 
+ !  buffer=lireligne(uread)
+ !  READ(buffer, *, err = 10) Ndivu
+ !  CALL prvari (uprint, 'NdivU                : ', Ndivu)
+ !  print*,'size(UU) cdt initiale =',size(UU)
+ !  !!
+ !  DO ii = 1, Ndivu 
+ !     buffer = lireligne(uread)
+ !     READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, uinit
+ !     print*, xmin, xmax, ymin, ymax, uinit
+ !     DO is = 1, NsInt
+ !        if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
+ !              & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
+ !             & UU(is)= uinit
+ !     END DO
+ !     DO jt = 1, Nbt
+ !        if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
+ !             & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
+ !             & UU(jt + NsInt)= uinit
+ !     END DO
+ !  END DO
+
+ case(1)
+   NbTpS = 0
+    DO jt = 1,Nbt
+       if (TypS(1,jt) == 100) then
+          EE(jt + NsInt) = 8.D-1
+       elseif (TypS(1,jt) == 200) then
+          EE(jt + NsInt) = 1.D-1
+       elseif (TypS(1,jt) == 300) then
+          EE(jt + NsInt) = 1.D-1
+       elseif (TypS(1,jt) == 400) then
+          EE(jt + NsInt) = 1.D-1
+       elseif (TypS(1,jt) == 500) then
+          EE(jt + NsInt) = 1.D-1
+       end if
+       Do m = 1, typegeomaille
+         EE(NuSoK (m,jt)) = EE(NuSoK (m,jt)) + EE(jt + NsInt)
+         NbTpS(NuSoK (m,jt)) = NbTpS(NuSoK (m,jt)) + 1
+      END Do
+    END DO
+    DO is = 1, NsInt
+      EE(is) = EE(is)/NbTpS(is)
+   END DO
+
+end Select
+
 
   !!----------------------------------------
   !! lecture de la condition initiale pour V
   !!----------------------------------------
-  buffer=lireligne(uread)
-  READ(buffer, *, err = 10) TypecondinitialeV
-  CALL prvari (uprint, 'TypecondinitialeU       : ', TypecondinitialeV)
   !!
   Select case ( TypecondinitialeV )
      !
   case(0) 
-     buffer=lireligne(uread)
-     READ(buffer, *, err = 10) Ndivv
-     CALL prvari (uprint, 'NdivV                : ', Ndivv)
-     print*,'size(VV) cdt initiale =',size(VV)
+   !  buffer=lireligne(uread)
+   !  READ(buffer, *, err = 10) Ndivv
+   !  CALL prvari (uprint, 'NdivV                : ', Ndivv)
+   !  print*,'size(VV) cdt initiale =',size(VV)
      !!
-     DO ii = 1, Ndivv 
-        buffer = lireligne(uread)
-        READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, vinit
-        print*, xmin, xmax, ymin, ymax, vinit
-        DO is = 1, NsInt
-           if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
-                & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
-                & VV(is)= vinit
-        END DO
-        DO jt = 1, Nbt
-           if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
-                & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
-                & VV(jt + NsInt)= vinit
-        END DO
-     END DO
+   !  DO ii = 1, Ndivv 
+   !     buffer = lireligne(uread)
+   !     READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, vinit
+   !     print*, xmin, xmax, ymin, ymax, vinit
+   !     DO is = 1, NsInt
+   !        if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
+   !             & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
+   !             & VV(is)= vinit
+   !     END DO
+   !     DO jt = 1, Nbt
+   !        if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
+   !             & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
+   !             & VV(jt + NsInt)= vinit
+   !     END DO
+   !  END DO
 
   case(1) 
      ! condition initiale faite par gbord
      !
      DO is = 1, NsInt
-        VV(is) = gbord(0.D0, CoordS(1,is), CoordS(2,is), choixgb)
+        VV(is) = 0.D0
      END DO
      DO jt = 1, Nbt
-        VV(jt + NsInt) = gbord(0.D0, CoordK(1,jt), CoordK(2,jt), choixgb)
+        VV(jt + NsInt) = 0.D0
      END DO
 
-  case(2) ! condition initiale aleartoire 
-
-     call random_number(VV)
-
-  case(3) ! condition initiale faite par une condition existante 
-     DO jt = 1, NbInc
-        READ(cdtinitialeV,"(f30.20)", err = 12) VV(jt)
-     END DO
-  end Select
-
+   end select
   !=====================
   ! lecture des points 
   !====================

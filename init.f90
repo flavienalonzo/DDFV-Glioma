@@ -442,13 +442,28 @@ SUBROUTINE  INIT
   READ(buffer, *, err = 10) ntarr
   call prvari (uprint, 'ntarr                             : ',ntarr)
 
-  print*, 'UwU 443'
   Allocate (Tempstock(ntarr))
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) (Tempstock(i),i=1,ntarr)
   call prchar (uprint,'Temps de stockage des solutions')
   write (uprint,*)(Tempstock(i),i=1,ntarr)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) TypecondinitialeU
+  CALL prvari (uprint, 'TypecondinitialeU       : ', TypecondinitialeU)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) TypecondinitialeC
+  CALL prvari (uprint, 'TypecondinitialeC       : ', TypecondinitialeC)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) TypecondinitialeE
+  CALL prvari (uprint, 'TypecondinitialeE       : ', TypecondinitialeE)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) TypecondinitialeV
+  CALL prvari (uprint, 'TypecondinitialeV       : ', TypecondinitialeV)
 
   !-----------------
   ! Fin du programme

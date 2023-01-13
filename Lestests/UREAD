@@ -220,23 +220,27 @@ Les temps d arret (Tempstock) = 1. 2.   4. 5.  10. 20.
 * cette partie n'est pas lue mais doit être compatible si typrci vaut 1 
 * CI Pour U
 
-TypecondinitialeU = 0
+TypecondinitialeU = 1
 
-Nombre de region solution constante (Ndivu)   = 1
-region 1, Position en xmin,xmax,ymin ymax, v  = 0.45 0.55 0.45 0.55    1. 
-*region 2, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.2 0.3    5. 
-*region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
-*region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
+* Nombre de region solution constante (Ndivu)   = 1
+* region 1, Position en xmin,xmax,ymin ymax, v  = 0.45 0.55 0.45 0.55    1. 
+* region 2, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.2 0.3    5. 
+* region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
+* region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
 *--------------------------------------------------
 
 
-TypecondinitialeV = 0
+TypecondinitialeC = 1
 
-Nombre de region solution constante (Ndivv)   = 4
-region 1, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.7 0.8    5. 
-region 2, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.2 0.3    5. 
-region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
-region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
+* Nombre de region solution constante (Ndivv)   = 4
+* region 1, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.7 0.8    5. 
+* region 2, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.2 0.3    5. 
+* region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
+* region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
+
+TypecondinitialeE = 1
+
+TypecondinitialeV = 1
 *--------------------------------------------------
 * Points de sauvegarde des points en cours du temps 
 *---------------------------------------------------

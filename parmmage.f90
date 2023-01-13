@@ -22,7 +22,7 @@ module parmmage
 
   INTEGER                 ::  Nbs, Nbt,  Nseg, NsInt, Nbord, NsegInt, Nsegbord,NbInc
   REAL (kind=long),   DIMENSION(:,:), ALLOCATABLE :: CoordS, CoordK, CoordMseg, NsigK, NsigeKe
-  INTEGER,            DIMENSION(:,:), ALLOCATABLE :: NuSoK
+  INTEGER,            DIMENSION(:,:), ALLOCATABLE :: NuSoK, TypS
   INTEGER,            DIMENSION(:,:), ALLOCATABLE :: NuVoisK
   INTEGER,            DIMENSION(:)  , ALLOCATABLE :: Ntyps, Ntypseg
   INTEGER,            DIMENSION(:,:), ALLOCATABLE :: NuSeg, NumTVoisSeg

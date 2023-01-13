@@ -33,12 +33,19 @@ SUBROUTINE   maillage
      ! --------------------------------------------------------------
      OPEN (uele,     file = nom_ele   ,  status = 'old')
      READ (uele,*) nbt, bidon, typet
-     CALL prvari(uprint,'nombre des traingles   (Nbt) ', Nbt )
+     CALL prvari(uprint,'nombre des triangles   (Nbt) ', Nbt )
      ALLOCATE ( NuSoK(3,Nbt) )
      !
+     if (typet==0) then 
      DO kt = 1,Nbt
         READ(uele,*) n, ( NuSoK(j,kt),j=1,3 )
      END DO
+      else 
+         allocate ( TypS(typet,Nbt) )
+         DO kt = 1,Nbt
+            READ(uele,*) n, ( NuSoK(j,kt),j=1,3 ), (TypS(k,kt),k=1,typet)
+         END DO
+      end if
      close(uele)
      ! -------------------------------------------------------- 
      ! -- lecture des coordonnees de chaque sommet : nom.1.node
@@ -115,7 +122,7 @@ SUBROUTINE   maillage
   case (2)
      ! fichier benchmark boyer
      ! -------------------------------------------
-     ! -- lecture des coordonnées de chaque sommet 
+     ! -- lecture des coordonnï¿½es de chaque sommet 
      ! -------------------------------------------
      !
      OPEN(unode,     file = nom_mesh  ,  status = 'old')
