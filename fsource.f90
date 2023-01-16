@@ -2,6 +2,60 @@ Module fsource
 
 Contains
 
+   subroutine surge(UU,CC,EE,VV,Ndim)
+      use longr
+      USE imprime
+      USE parmmage
+      implicit none 
+      Integer , intent(in) :: Ndim
+      REAL(kind=long), DIMENSION(Ndim), intent(inout)  :: UU, CC, EE, VV
+      integer, dimension(NsInt)   :: NbTpS
+      integer :: jt, m, is
+      NbTpS = 0
+      DO jt = 1,Nbt
+         if (TypS(1,jt) == 100) then
+            UU(jt + NsInt) = UU(jt + NsInt)
+            CC(jt + NsInt) = CC(jt + NsInt)
+            EE(jt + NsInt) = EE(jt + NsInt)
+            VV(jt + NsInt) = VV(jt + NsInt)
+         elseif (TypS(1,jt) == 200) then
+            UU(jt + NsInt) = UU(jt + NsInt)
+            CC(jt + NsInt) = CC(jt + NsInt)
+            EE(jt + NsInt) = EE(jt + NsInt)
+            VV(jt + NsInt) = VV(jt + NsInt)
+         elseif (TypS(1,jt) == 300) then
+            UU(jt + NsInt) = 0.D0
+            CC(jt + NsInt) = 0.D0
+            EE(jt + NsInt) = 0.D0
+            VV(jt + NsInt) = 0.D0
+         elseif (TypS(1,jt) == 400) then
+            UU(jt + NsInt) = 0.D0
+            CC(jt + NsInt) = 0.D0
+            EE(jt + NsInt) = 0.D0
+            VV(jt + NsInt) = 0.D0
+         elseif (TypS(1,jt) == 500) then
+            UU(jt + NsInt) = 0.D0
+            CC(jt + NsInt) = 0.D0
+            EE(jt + NsInt) = 0.D0
+            VV(jt + NsInt) = 0.D0
+         end if
+         Do m = 1, typegeomaille
+            UU(NuSoK (m,jt)) = UU(NuSoK (m,jt)) + UU(jt + NsInt)
+            CC(NuSoK (m,jt)) = CC(NuSoK (m,jt)) + CC(jt + NsInt)
+            EE(NuSoK (m,jt)) = EE(NuSoK (m,jt)) + EE(jt + NsInt)
+            VV(NuSoK (m,jt)) = VV(NuSoK (m,jt)) + VV(jt + NsInt)
+            NbTpS(NuSoK (m,jt)) = NbTpS(NuSoK (m,jt)) + 1
+         END Do
+      END DO
+      DO is = 1, NsInt
+         UU(is) = UU(is)/NbTpS(is)
+         CC(is) = CC(is)/NbTpS(is)
+         EE(is) = EE(is)/NbTpS(is)
+         VV(is) = VV(is)/NbTpS(is)
+      END DO
+
+   end subroutine surge
+
    function fu(u,e)
       use longr
       implicit none 
@@ -79,8 +133,29 @@ Contains
       implicit none 
       REAL(kind=long), INTENT(in)     :: temps,u
       REAL(kind=long)  :: Tu 
-
-      Tu = -u 
+      if (Use_chemo .and. Use_radio) then 
+         if (ABS(temps-16.5)<=2.5 .or. ABS(temps-23.5)<=2.5 .or. ABS(temps-30.5)<=2.5 .or. ABS(temps-37.5)<=2.5 .or. &
+         & ABS(temps-44.5)<=2.5 .or. ABS(temps-51.5)<=2.5) then
+            Tu = -(Dose_chemo+Gain_radio*Dose_radio)*u
+         else 
+            Tu = 0.D0
+         end if
+      elseif (.not.Use_chemo .and. Use_radio) then 
+         if (ABS(temps-35)<=21) then
+            Tu = -Dose_radio*u
+         else 
+            Tu = 0.D0
+         end if
+      elseif (Use_chemo .and. .not.Use_radio) then 
+         if (ABS(temps-16.5)<=2.5 .or. ABS(temps-23.5)<=2.5 .or. ABS(temps-30.5)<=2.5 .or. ABS(temps-37.5)<=2.5 .or. &
+         & ABS(temps-44.5)<=2.5 .or. ABS(temps-51.5)<=2.5) then
+            Tu = -Dose_chemo*u
+         else 
+            Tu = 0.D0
+         end if
+      else
+         Tu = 0.D0
+      end if
    end function
 
    function deriveeTu(temps,u)
@@ -89,7 +164,29 @@ Contains
       REAL(kind=long), INTENT(in)     :: temps,u
       REAL(kind=long)  :: deriveeTu 
 
-      deriveeTu = -1
+      if (Use_chemo .and. Use_radio) then 
+         if (ABS(temps-16.5)<=2.5 .or. ABS(temps-23.5)<=2.5 .or. ABS(temps-30.5)<=2.5 .or. ABS(temps-37.5)<=2.5 .or. &
+         & ABS(temps-44.5)<=2.5 .or. ABS(temps-51.5)<=2.5) then
+            deriveeTu = -(Dose_chemo+Gain_radio*Dose_radio)
+         else 
+            deriveeTu = 0.D0
+         end if
+      elseif (.not.Use_chemo .and. Use_radio) then 
+         if (ABS(temps-35)<=21) then
+            deriveeTu = -Dose_radio
+         else 
+            deriveeTu = 0.D0
+         end if
+      elseif (Use_chemo .and. .not.Use_radio) then 
+         if (ABS(temps-16.5)<=2.5 .or. ABS(temps-23.5)<=2.5 .or. ABS(temps-30.5)<=2.5 .or. ABS(temps-37.5)<=2.5 .or. &
+         & ABS(temps-44.5)<=2.5 .or. ABS(temps-51.5)<=2.5) then
+            deriveeTu = -Dose_chemo
+         else 
+            deriveeTu = 0.D0
+         end if
+      else
+         deriveeTu = 0.D0
+      end if  
    end function
 
    function hu(c)
@@ -97,8 +194,11 @@ Contains
       implicit none
       REAL(kind=long), INTENT(in)     :: c
       REAL(kind=long)  :: hu 
-
-      hu = c 
+      if (c>=Chypo) then 
+         hu = 1.D0
+      else 
+         hu = 0.D0
+      end if
    end function
 
    function gv(c)
@@ -106,8 +206,11 @@ Contains
       implicit none
       REAL(kind=long), INTENT(in)     :: c
       REAL(kind=long)  :: gv
-
-      gv = c 
+      if (c>=Cnecro .and. c<=Chypo) then 
+         gv = c 
+      else 
+         gv = 0.D0
+      end if
    end function
 
   FUNCTION fsourceu(t,x,y,m) ! m represente le choix de probleme
@@ -221,98 +324,98 @@ Contains
   END FUNCTION gbord
 
   !=======================
-  function Adegen(y) !Phi=FU
+  function AdegenU(y) !Phi=FU
     !=======================
     USE longr
-    Real(kind=long) :: y,Adegen
+    Real(kind=long) :: y,AdegenU
 
-    select case (choixAdeg)
+    select case (ChoixAdegU)
     case(0)  !!test 0
-       Adegen= CoefdiffuAdeg * y
+       AdegenU= CoefdiffuAdeg * y
     case(1)  !!test 1
-       Adegen=CoefdiffuAdeg* (1.D0/2.D0 - y/3.D0 )*y**2
+       AdegenU=CoefdiffuAdeg* (1.D0/2.D0 - y/3.D0 )*y**2
     case(2) !!test 2
-       Adegen=CoefdiffuAdeg* (1.D0/3.D0 -y/2.D0 +y*y/5.D0 )*y**3
+       AdegenU=CoefdiffuAdeg* (1.D0/3.D0 -y/2.D0 +y*y/5.D0 )*y**3
     case(3) !!test 3
-       Adegen=CoefdiffuAdeg* (1.D0/5.D0 -2.D0*y/3.D0 + (6./7.D0)*y**2 -(y**3)/2.D0 +(y**4)/9.D0)*y**5
+       AdegenU=CoefdiffuAdeg* (1.D0/5.D0 -2.D0*y/3.D0 + (6./7.D0)*y**2 -(y**3)/2.D0 +(y**4)/9.D0)*y**5
     case(4) !!test 4
-       Adegen=CoefdiffuAdeg*y**2
+       AdegenU=CoefdiffuAdeg*y**2
     case default   
        stop 'Adege'
     end select
 
-  end function Adegen
+  end function AdegenU
 
   !=============================
-  function DerivAdeg(y) !dPhi=fu
+  function DerivAdegU(y) !dPhi=fu
     !===========================
     USE longr
-    REAL( kind=long) :: y,DerAdeg
+    REAL( kind=long) :: y,DerivAdegU
     !
-    select case (choixAdeg)
+    select case (ChoixAdegU)
     case(0) !!test 0
-       DerivAdeg = CoefdiffuAdeg
+       DerivAdegU = CoefdiffuAdeg
     case(1) !!test 1
-       DerivAdeg = CoefdiffuAdeg * y*( 1.D0 - y )
+       DerivAdegU = CoefdiffuAdeg * y*( 1.D0 - y )
     case(2) !!test 2
-       DerivAdeg= CoefdiffuAdeg * ( y*(1.D0 - y) )**2
+       DerivAdegU= CoefdiffuAdeg * ( y*(1.D0 - y) )**2
     case(3) !!test 3
-       DerivAdeg= CoefdiffuAdeg * ( y*(1.D0 - y) )**4
+       DerivAdegU= CoefdiffuAdeg * ( y*(1.D0 - y) )**4
     case(4) !!test 4
-       DerivAdeg=CoefdiffuAdeg*2.*y
+       DerivAdegU=CoefdiffuAdeg*2.*y
     case default  
        stop 'DerAdeg'
 
     end select
-  end function DerivAdeg
+  end function DerivAdegU
 
   !==========================================================
-  function xi(y) ! Squared-Kirchoff transform: integral de rm
+  function xiU(y) ! Squared-Kirchoff transform: integral de rmU
     !========================================================
     USE longr
-    REAL( kind=long) :: y, xi, Coefrm
+    REAL( kind=long) :: y, xiU, CoefrmU
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case (choixAdeg)
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case (ChoixAdegU)
     case(0) !!test 0
-       xi = Coefrm* y
+       xiU = CoefrmU* y
     case(1)  !!test 1
-       xi = Coefrm*( ((2*y-1)*sqrt(y*(1.D0 - y))/4) + (acos(-2*y+1.))/8)
+       xiU = CoefrmU*( ((2*y-1)*sqrt(y*(1.D0 - y))/4) + (acos(-2*y+1.))/8)
     case(2) !!test 2
-       xi = Coefrm * (1.D0/2.D0 -y/3.D0 )*y**2
+       xiU = CoefrmU * (1.D0/2.D0 -y/3.D0 )*y**2
     case(3) !!test 3
-       xi = Coefrm * (1.D0/3.D0 -y/2.D0 +y*y/5.D0 )*y**3
+       xiU = CoefrmU * (1.D0/3.D0 -y/2.D0 +y*y/5.D0 )*y**3
     case(4) !!test 4
-       xi=sqrt(CoefdiffuAdeg*2.)*(2./3.)*y**(3./2.)
+       xiU=sqrt(CoefdiffuAdeg*2.)*(2./3.)*y**(3./2.)
     case default  
-       stop 'xi'
+       stop 'xiU'
 
     end select
-  end function xi
+  end function xiU
 
   !=======================================
-  function rm(y) ! racine carre de DerAdeg
+  function rmU(y) ! racine carre de DerAdeg
     !=====================================
     USE longr
-    REAL( kind=long) :: y, rm, Coefrm
+    REAL( kind=long) :: y, rmU, CoefrmU
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case (choixAdeg)
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case (ChoixAdegU)
     case(0) !!test 0
-       rm = Coefrm
+       rmU = CoefrmU
     case(1)  !!test 1
-       rm = Coefrm *sqrt(y*(1.D0 - y))
+       rmU = CoefrmU *sqrt(y*(1.D0 - y))
     case(2) !!test 2
-       rm = Coefrm * y*(1.D0 - y)
+       rmU = CoefrmU * y*(1.D0 - y)
     case(3) !!test 3
-       rm = Coefrm * ( y*(1.D0 - y) )**2
+       rmU = CoefrmU * ( y*(1.D0 - y) )**2
     case(4) !!test 4
-       rm = sqrt(CoefdiffuAdeg*2.*y)
+       rmU = sqrt(CoefdiffuAdeg*2.*y)
     case default  
-       stop 'rm'
+       stop 'rmU'
 
     end select
-  end function rm
+  end function rmU
 
   !=============
   function ln(y)
@@ -335,397 +438,879 @@ Contains
   end function Derivln
   
   !=======================
-  function rmCroit(y)
+  function rmCroitU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, z, rmCroit, Coefrm,umax
+    REAL( kind=long) :: y, z, rmCroitU, CoefrmU,umax
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case(choixAdeg)
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case(ChoixAdegU)
     case(0) !!test 0
-       rmCroit = Coefrm
+       rmCroitU = CoefrmU
     case(1)  !!test 1
        umax= 0.5D0
        z=min(y,umax)
-       rmCroit =  Coefrm *sqrt( z*(1.D0-z))
+       rmCroitU =  CoefrmU *sqrt( z*(1.D0-z))
     case(2)  !!test 2
        umax= 0.5D0
        z=min(y,umax)
-       rmCroit =  Coefrm * z*(1.D0-z)
+       rmCroitU =  CoefrmU * z*(1.D0-z)
     case(3)  !!test 3
        umax= 0.5D0
        z=min(y,umax)
-       rmCroit=  Coefrm * (z*(1.D0-z))**2
+       rmCroitU=  CoefrmU * (z*(1.D0-z))**2
     case(4) !!test 4
-       rmCroit = sqrt(CoefdiffuAdeg*2.*y)
+       rmCroitU = sqrt(CoefdiffuAdeg*2.*y)
     case default
-       stop 'pb rmCroit'
+       stop 'pb rmCroitU'
     end select
-  end function rmCroit
+  end function rmCroitU
   !=======================
-  function DerrmCroit(y)
+  function DerrmCroitU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, DerrmCroit, Coefrm,umax
+    REAL( kind=long) :: y, DerrmCroitU, CoefrmU,umax
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case(choixAdeg) 
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case(ChoixAdegU) 
     case(0) !!test 0
-       DerrmCroit = 0.D0
+       DerrmCroitU = 0.D0
     case(1)  !!test 1
        umax= 0.5D0
        y = max(y, epsilon)
        if (y <=umax) then
-          DerrmCroit =  Coefrm * (1-2.D0*y)/(2*sqrt( y*(1.D0-y)))
+          DerrmCroitU =  CoefrmU * (1-2.D0*y)/(2*sqrt( y*(1.D0-y)))
        else
-          DerrmCroit = 0.D0
+          DerrmCroitU = 0.D0
        end if
     case(2)  !!test 2
        umax= 0.5D0
        if (y <=umax) then
-          DerrmCroit =  Coefrm * (1-2.D0*y)
+          DerrmCroitU =  CoefrmU * (1-2.D0*y)
        else
-          DerrmCroit = 0.D0
+          DerrmCroitU = 0.D0
        end if
     case(3)  !!test 3
        umax= 0.5D0
        if (y <=umax) then
-          DerrmCroit =  Coefrm * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
+          DerrmCroitU =  CoefrmU * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
        else
-          DerrmCroit = 0.D0
+          DerrmCroitU = 0.D0
        end if
     case(4) !!test 4
-       DerrmCroit = Coefrm/(sqrt(2.*y))
+       DerrmCroitU = CoefrmU/(sqrt(2.*y))
     case default
-       stop 'pb DerrmCroit'
+       stop 'pb DerrmCroitU'
     end select
-  end function DerrmCroit
+  end function DerrmCroitU
 
   !=======================
-  function rmDeCroit(y)
+  function rmDeCroitU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, z, rmDeCroit, Coefrm,umax
+    REAL( kind=long) :: y, z, rmDeCroitU, CoefrmU,umax
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case(choixAdeg)
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case(ChoixAdegU)
     case(0) !!test 0
-       rmDeCroit = Coefrm
+       rmDeCroitU = CoefrmU
     case(1)  !!test 1
        umax= 0.5D0
        z = max(y,umax)
-       rmDeCroit =  Coefrm *sqrt( z*(1.D0-z)) -sqrt( umax*(1.D0-umax) )
+       rmDeCroitU =  CoefrmU *sqrt( z*(1.D0-z)) -sqrt( umax*(1.D0-umax) )
     case(2)  !!test 2
        umax= 0.5D0
        z=max(y,umax)
-       rmDeCroit =  Coefrm * ( z*(1.D0-z) - umax*(1.D0-umax) )
+       rmDeCroitU =  CoefrmU * ( z*(1.D0-z) - umax*(1.D0-umax) )
     case(3)  !!test 3
        umax= 0.5D0
        z=max(y,umax)
-       rmDeCroit=  Coefrm * ( (z*(1.D0-z))**2 - (umax*(1.D0-umax))**2 )
+       rmDeCroitU=  CoefrmU * ( (z*(1.D0-z))**2 - (umax*(1.D0-umax))**2 )
     case(4) !!test 4
-       rmDeCroit = 0.D0
+       rmDeCroitU = 0.D0
     case default
-       stop 'pb rmDeCroit'
+       stop 'pb rmDeCroitU'
     end select
-  end function rmDeCroit
+  end function rmDeCroitU
 
   !=======================
-  function DerrmDeCroit(y)
+  function DerrmDeCroitU(y)
     !=====================
     USE longr
-    REAL( kind=long) :: y, DerrmDeCroit, Coefrm
+    REAL( kind=long) :: y, DerrmDeCroitU, CoefrmU
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case(choixAdeg)
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case(ChoixAdegU)
     case(0) !!test 0
-       DerrmDeCroit = 0.D0
+       DerrmDeCroitU = 0.D0
     case(1)  !!test 1
        umax= 0.5D0
        y = min(y,1.0-epsilon)
        if (y > umax) then
-          DerrmDeCroit =  Coefrm * (1-2.D0*y)/(2*sqrt( y*(1.D0-y)))
+          DerrmDeCroitU =  CoefrmU * (1-2.D0*y)/(2*sqrt( y*(1.D0-y)))
        else
-          DerrmDeCroit = 0.D0
+          DerrmDeCroitU = 0.D0
        end if
     case(2)  !!test 2
        umax= 0.5D0
        if (y > umax) then
-          DerrmDeCroit =  Coefrm * (1-2.D0*y)
+          DerrmDeCroitU =  CoefrmU * (1-2.D0*y)
        else
-          DerrmDeCroit = 0.D0
+          DerrmDeCroitU = 0.D0
        end if
     case(3)  !!test 3
        umax= 0.5D0
        if (y > umax) then
-          DerrmDecroit =  Coefrm * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
+          DerrmDeCroitU =  CoefrmU * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
        else
           DerrmDeroit = 0.D0
        end if
     case(4) !!test 4
        DerrmDeroit = 0.D0
     case default
-       stop 'pb DerrmDeCroit'
+       stop 'pb DerrmDeCroitU'
     end select
-  end function DerrmDeCroit
+  end function DerrmDeCroitU
 
 
   !=======================
-  function Derrm(y)
+  function DerrmU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, Derrm, Coefrm
+    REAL( kind=long) :: y, DerrmU, CoefrmU
     !
-    Coefrm = sqrt(CoefdiffuAdeg)
-    select case(choixAdeg)
+    CoefrmU = sqrt(CoefdiffuAdeg)
+    select case(ChoixAdegU)
   
     case(1)  !!test 1
-       Derrm = 0.D0
+       DerrmU = 0.D0
     case(2)  !!test 2
-       Derrm = Coefrm *(1.D0 - 2.D0*y)
+       DerrmU = CoefrmU *(1.D0 - 2.D0*y)
     case(3)  !!test 3
-       Derrm= Coefrm * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
+       DerrmU= CoefrmU * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
     case default
-       stop 'pb Derrm'
+       stop 'pb DerrmU'
     end select
-  end function Derrm
+  end function DerrmU
 
 !=======================
-  function Mu(y)
+  function MuU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, Mu
+    REAL( kind=long) :: y, MuU
 
 
-    select case(ChoixMu)
+    select case(ChoixMuU)
     case(1)
-       Mu = CoefTranspMu 
+       MuU = CoefTranspMuU 
     case(2)
-       Mu = CoefTranspMu *y
+       MuU = CoefTranspMuU *y
     case(3)
-       Mu= CoefTranspMu *y*(1.D0-y) 
+       MuU= CoefTranspMuU *y*(1.D0-y) 
     case(4)
-       Mu= CoefTranspMu *y*(1.D0-y)**2
+       MuU= CoefTranspMuU *y*(1.D0-y)**2
     case(5)
        IF ( y <= ubar ) THEN
-          Mu= CoefTranspMu *y*( 1.D0-(y/ubar)**gamma)
+          MuU= CoefTranspMuU *y*( 1.D0-(y/ubar)**gamma)
        ELSE
-          Mu= 0.D0
+          MuU= 0.D0
        END IF
        case(6)
-          Mu= CoefTranspMu *( y*(1.D0-y) )**2
+          MuU= CoefTranspMuU *( y*(1.D0-y) )**2
     case default
-       stop 'pb Mu'
+       stop 'pb MuU'
     end select
 
-  end function Mu
+  end function MuU
 
   !=======================
-  function MuCroit(y)
+  function MuCroitU(y)
     !=======================
     USE longr
     implicit none
-    REAL( kind=long) :: y, z, MuCroit, umax
+    REAL( kind=long) :: y, z, MuCroitU, umax
     !integer :: choix
 
 
 
-    select case(ChoixMu)
+    select case(ChoixMuU)
     case(1)
-       MuCroit = CoefTranspMu 
+       MuCroitU = CoefTranspMuU 
     case(2)
-       MuCroit = CoefTranspMu *y
+       MuCroitU = CoefTranspMuU *y
     case(3)
        umax= 0.5D0
        z=min(y,umax)
-       MuCroit=  CoefTranspMu * z*(1.D0-z)
+       MuCroitU=  CoefTranspMuU * z*(1.D0-z)
     case(4)
        umax= 1.D0/3.D0
        z=min(y,umax)
-       MuCroit= CoefTranspMu * z*(1.D0-z)**2
+       MuCroitU= CoefTranspMuU * z*(1.D0-z)**2
     case(5)
        umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
        z=min(y,umax)
        IF ( z <= ubar ) THEN
-          MuCroit= CoefTranspMu * z*(1.D0-(z/ubar)**gamma)
+          MuCroitU= CoefTranspMuU * z*(1.D0-(z/ubar)**gamma)
        ELSE
-          MuCroit= 0.D0
+          MuCroitU= 0.D0
        END IF
     case(6)
        umax= 0.5D0
        z=min(y,umax)
-       MuCroit=  CoefTranspMu * (z*(1.D0-z))**2
+       MuCroitU=  CoefTranspMuU * (z*(1.D0-z))**2
     case default
-       stop 'pb MuCroit'
+       stop 'pb MuCroitU'
     end select
 
-  end function MuCroit
+  end function MuCroitU
 
   !=======================
-  function DerivMuCroit(y)
+  function DerivMuCroitU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, DerivMuCroit, umax
+    REAL( kind=long) :: y, DerivMuCroitU, umax
     !integer :: choix
     !
 
-    select case(ChoixMu)
+    select case(ChoixMuU)
     case(1)
-       DerivMuCroit = 0.D0 
+       DerivMuCroitU = 0.D0 
     case(2)
-       DerivMuCroit = CoefTranspMu
+       DerivMuCroitU = CoefTranspMuU
     case(3)
        umax= 0.5D0
        if (y <=umax) then
-          DerivMuCroit =  CoefTranspMu * (1-2.D0*y)
+          DerivMuCroitU =  CoefTranspMuU * (1-2.D0*y)
        else
-          DerivMuCroit = 0.D0
+          DerivMuCroitU = 0.D0
        end if
     case(4)
        umax= 1.D0/3.D0
        if (y < umax) then
-          DerivMuCroit = CoefTranspMu * ( (1.D0-y)**2 -2.D0*y*(1.D0-y) )
+          DerivMuCroitU = CoefTranspMuU * ( (1.D0-y)**2 -2.D0*y*(1.D0-y) )
        else
-          DerivMuCroit = 0.D0
+          DerivMuCroitU = 0.D0
        end if
     case(5)
        umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
        IF (y < umax .AND. y< ubar) THEN !! Although we know that y<=ubar
-          DerivMuCroit = CoefTranspMu * (1.D0 - ( gamma+1.D0 )*( (y/ubar)**gamma) )
+          DerivMuCroitU = CoefTranspMuU * (1.D0 - ( gamma+1.D0 )*( (y/ubar)**gamma) )
        ELSE
-          DerivMuCroit = 0.D0
+          DerivMuCroitU = 0.D0
        END IF
     case(6)
        umax= 0.5D0
        if (y <=umax) then
-          DerivMuCroit =  CoefTranspMu * 2.D0*y*(1.D0-y)*(1-2.D0*y)
+          DerivMuCroitU =  CoefTranspMuU * 2.D0*y*(1.D0-y)*(1-2.D0*y)
        else
-          DerivMuCroit = 0.D0
+          DerivMuCroitU = 0.D0
        end if
     case default
-       stop 'pb DerivMuCroit'
+       stop 'pb DerivMuCroitU'
     end select
 
-  end function DerivMuCroit
+  end function DerivMuCroitU
 
   !=======================
-  function MuDeCroit(y)
+  function MuDeCroitU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, z, MuDecroit, umax
+    REAL( kind=long) :: y, z, MuDeCroitU, umax
     !
 
-    select case(ChoixMu)
+    select case(ChoixMuU)
     case(1)
-       MuDeCroit = 0.D0 
+       MuDeCroitU = 0.D0 
     case(2)
-       MuDecroit = 0.D0
+       MuDeCroitU = 0.D0
     case(3)
        umax= 0.5D0
        z=max(y,umax)
-       MuDeCroit=  CoefTranspMu * ( z*(1.D0-z) - umax*(1.D0-umax) )
+       MuDeCroitU=  CoefTranspMuU * ( z*(1.D0-z) - umax*(1.D0-umax) )
     case(4)
        umax= 1.D0/3.D0
        z=max(y,umax)
-       MuDecroit= CoefTranspMu * ( z*(1.D0-z)**2 -umax*(1.D0-umax)**2 ) 
+       MuDeCroitU= CoefTranspMuU * ( z*(1.D0-z)**2 -umax*(1.D0-umax)**2 ) 
     case(5)
        umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
        z=max(y,umax)
        IF (z <= ubar ) THEN
-          MuDeCroit= CoefTranspMu * ( z*(1.D0-(z/ubar)**gamma) )
+          MuDeCroitU= CoefTranspMuU * ( z*(1.D0-(z/ubar)**gamma) )
        ELSE
-          MuDeCroit= 0.D0
+          MuDeCroitU= 0.D0
        END IF
        IF ( umax <= ubar )  THEN
-          MuDeCroit= MuDeCroit  - CoefTranspMu*umax*( 1.D0-(umax/ubar)**gamma ) 
+          MuDeCroitU= MuDeCroitU  - CoefTranspMuU*umax*( 1.D0-(umax/ubar)**gamma ) 
        END IF
     case(6)
        umax= 0.5D0
        z=max(y,umax)
-       MuDeCroit=  CoefTranspMu * ( (z*(1.D0-z))**2 - (umax*(1.D0-umax))**2 )
+       MuDeCroitU=  CoefTranspMuU * ( (z*(1.D0-z))**2 - (umax*(1.D0-umax))**2 )
     case default
        stop 'pb MuCroit'
     end select
 
-  end function MuDeCroit
+  end function MuDeCroitU
 
   !=======================
-  function DerivMuDecroit(y)
+  function DerivMuDeCroitU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y, DerivMuDecroit, umax
+    REAL( kind=long) :: y, DerivMuDeCroitU, umax
     !
 
-    select case(ChoixMu)
+    select case(ChoixMuU)
     case(1)
-       DerivMuDecroit = 0.D0 
+       DerivMuDeCroitU = 0.D0 
     case(2)
-       DerivMuDecroit = 0.D0
+       DerivMuDeCroitU = 0.D0
     case(3)
        umax= 0.5D0
        if (y > umax) then
-          DerivMuDecroit =  CoefTranspMu * (1.D0-2.D0*y)
+          DerivMuDeCroitU =  CoefTranspMuU * (1.D0-2.D0*y)
        else
-          DerivMuDecroit = 0.D0
+          DerivMuDeCroitU = 0.D0
        end if
     case(4)
        umax= 1.D0/3.D0
        if (y > umax) then
-          DerivMuDecroit = CoefTranspMu * ( (1.D0-y)**2 -2.D0*y*(1.D0-y) )
+          DerivMuDeCroitU = CoefTranspMuU * ( (1.D0-y)**2 -2.D0*y*(1.D0-y) )
        else
-          DerivMuDecroit = 0.D0
+          DerivMuDeCroitU = 0.D0
        end if
     case(5)
        umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
        IF (y > umax .AND. y < ubar) THEN
-          DerivMuDeCroit = CoefTranspMu* ( 1.D0-(gamma+1.D0)*( (y/ubar)**gamma ) )
+          DerivMuDeCroitU = CoefTranspMuU* ( 1.D0-(gamma+1.D0)*( (y/ubar)**gamma ) )
        ELSE
-          DerivMuDeCroit = 0.D0
+          DerivMuDeCroitU = 0.D0
        END IF
     case(6)
        umax= 0.5D0
        if (y > umax) then
-          DerivMuDecroit =  CoefTranspMu * 2.D0*y*(1.D0-y)*(1.D0-2.D0*y)
+          DerivMuDeCroitU =  CoefTranspMuU * 2.D0*y*(1.D0-y)*(1.D0-2.D0*y)
        else
-          DerivMuDecroit = 0.D0
+          DerivMuDeCroitU = 0.D0
        end if
     case default
-       stop 'pb DerivMuDecroit'
+       stop 'pb DerivMuDeCroitU'
     end select
 
-  end function DerivMuDecroit
+  end function DerivMuDeCroitU
 
 
   !=======================
-  function DerivMu(y)
+  function DerivMuU(y)
     !=======================
     USE longr
-    REAL( kind=long) :: y,DerivMu
+    REAL( kind=long) :: y,DerivMuU
 
 
-    select case(ChoixMu)
+    select case(ChoixMuU)
     case(1)
-       DerivMu = 0.D0
+       DerivMuU = 0.D0
     case(2)
-       DerivMu = CoefTranspMu *1.D0
+       DerivMuU = CoefTranspMuU *1.D0
     case(3)
-       DerivMu = CoefTranspMu * ( 1.D0 - 2.D0*y )
+       DerivMuU = CoefTranspMuU * ( 1.D0 - 2.D0*y )
     case(4)
-       DerivMu = CoefTranspMu *( 1.D0 - y ) * ( 1.D0 - 3.D0*y )
+       DerivMuU = CoefTranspMuU *( 1.D0 - y ) * ( 1.D0 - 3.D0*y )
     case(5)
        IF ( y < ubar ) THEN
-          DerivMu= CoefTranspMu *( 1.D0-( gamma+ 1.D0 )*( (y/ubar)**gamma ) )
+          DerivMuU= CoefTranspMuU *( 1.D0-( gamma+ 1.D0 )*( (y/ubar)**gamma ) )
        ELSE
-          DerivMu= 0.D0
+          DerivMuU= 0.D0
        END IF
     case(6)
-       DerivMu = CoefTranspMu * 2.D0 *y*(1.D0-y)*( 1.D0 - 2.D0*y )
+       DerivMuU = CoefTranspMuU * 2.D0 *y*(1.D0-y)*( 1.D0 - 2.D0*y )
     case default
-       stop 'pb derivMu'
+       stop 'pb DerivMuU'
     end select
+  end function DerivMuU
+
+    !=======================
+  function AdegenE(y) !Phi=FU
+   !=======================
+   USE longr
+   Real(kind=long) :: y,AdegenE
+
+   select case (ChoixAdegU)
+   case(0)  !!test 0
+      AdegenE= CoefdiffeAdeg * y
+   case(1)  !!test 1
+      AdegenE=CoefdiffeAdeg* (1.D0/2.D0 - y/3.D0 )*y**2
+   case(2) !!test 2
+      AdegenE=CoefdiffeAdeg* (1.D0/3.D0 -y/2.D0 +y*y/5.D0 )*y**3
+   case(3) !!test 3
+      AdegenE=CoefdiffeAdeg* (1.D0/5.D0 -2.D0*y/3.D0 + (6./7.D0)*y**2 -(y**3)/2.D0 +(y**4)/9.D0)*y**5
+   case(4) !!test 4
+      AdegenE=CoefdiffeAdeg*y**2
+   case default   
+      stop 'Adege'
+   end select
+
+ end function AdegenE
+
+ !=============================
+ function DerivAdegE(y) !dPhi=fu
+   !===========================
+   USE longr
+   REAL( kind=long) :: y,DerivAdegE
+   !
+   select case (ChoixAdegE)
+   case(0) !!test 0
+      DerivAdegE = CoefdiffeAdeg
+   case(1) !!test 1
+      DerivAdegE = CoefdiffeAdeg * y*( 1.D0 - y )
+   case(2) !!test 2
+      DerivAdegE= CoefdiffeAdeg * ( y*(1.D0 - y) )**2
+   case(3) !!test 3
+      DerivAdegE= CoefdiffeAdeg * ( y*(1.D0 - y) )**4
+   case(4) !!test 4
+      DerivAdegE=CoefdiffeAdeg*2.*y
+   case default  
+      stop 'DerAdeg'
+
+   end select
+ end function DerivAdegE
+
+ !==========================================================
+ function xiE(y) ! Squared-Kirchoff transform: integral de rmU
+   !========================================================
+   USE longr
+   REAL( kind=long) :: y, xiE, CoefrmE
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case (ChoixAdegE)
+   case(0) !!test 0
+      xiE = CoefrmE* y
+   case(1)  !!test 1
+      xiE = CoefrmE*( ((2*y-1)*sqrt(y*(1.D0 - y))/4) + (acos(-2*y+1.))/8)
+   case(2) !!test 2
+      xiE = CoefrmE * (1.D0/2.D0 -y/3.D0 )*y**2
+   case(3) !!test 3
+      xiE = CoefrmE * (1.D0/3.D0 -y/2.D0 +y*y/5.D0 )*y**3
+   case(4) !!test 4
+      xiE=sqrt(CoefdiffeAdeg*2.)*(2./3.)*y**(3./2.)
+   case default  
+      stop 'xiE'
+
+   end select
+ end function xiE
+
+ !=======================================
+ function rmE(y) ! racine carre de DerAdeg
+   !=====================================
+   USE longr
+   REAL( kind=long) :: y, rmE, CoefrmE
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case (ChoixAdegE)
+   case(0) !!test 0
+      rmE = CoefrmE
+   case(1)  !!test 1
+      rmE = CoefrmE *sqrt(y*(1.D0 - y))
+   case(2) !!test 2
+      rmE = CoefrmE * y*(1.D0 - y)
+   case(3) !!test 3
+      rmE = CoefrmE * ( y*(1.D0 - y) )**2
+   case(4) !!test 4
+      rmE = sqrt(CoefdiffeAdeg*2.*y)
+   case default  
+      stop 'rmE'
+
+   end select
+ end function rmE
+ 
+ !=======================
+ function rmCroitE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, z, rmCroitE, CoefrmE,umax
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case(ChoixAdegE)
+   case(0) !!test 0
+      rmCroitE = CoefrmE
+   case(1)  !!test 1
+      umax= 0.5D0
+      z=min(y,umax)
+      rmCroitE =  CoefrmE *sqrt( z*(1.D0-z))
+   case(2)  !!test 2
+      umax= 0.5D0
+      z=min(y,umax)
+      rmCroitE =  CoefrmE * z*(1.D0-z)
+   case(3)  !!test 3
+      umax= 0.5D0
+      z=min(y,umax)
+      rmCroitE=  CoefrmE * (z*(1.D0-z))**2
+   case(4) !!test 4
+      rmCroitE = sqrt(CoefdiffeAdeg*2.*y)
+   case default
+      stop 'pb rmCroitE'
+   end select
+ end function rmCroitE
+ !=======================
+ function DerrmCroitE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, DerrmCroitE, CoefrmE,umax
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case(ChoixAdegE) 
+   case(0) !!test 0
+      DerrmCroitE = 0.D0
+   case(1)  !!test 1
+      umax= 0.5D0
+      y = max(y, epsilon)
+      if (y <=umax) then
+         DerrmCroitE =  CoefrmE * (1-2.D0*y)/(2*sqrt( y*(1.D0-y)))
+      else
+         DerrmCroitE = 0.D0
+      end if
+   case(2)  !!test 2
+      umax= 0.5D0
+      if (y <=umax) then
+         DerrmCroitE =  CoefrmE * (1-2.D0*y)
+      else
+         DerrmCroitE = 0.D0
+      end if
+   case(3)  !!test 3
+      umax= 0.5D0
+      if (y <=umax) then
+         DerrmCroitE =  CoefrmE * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
+      else
+         DerrmCroitE = 0.D0
+      end if
+   case(4) !!test 4
+      DerrmCroitE = CoefrmE/(sqrt(2.*y))
+   case default
+      stop 'pb DerrmCroitE'
+   end select
+ end function DerrmCroitE
+
+ !=======================
+ function rmDeCroitE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, z, rmDeCroitE, CoefrmE,umax
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case(ChoixAdegE)
+   case(0) !!test 0
+      rmDeCroitE = CoefrmE
+   case(1)  !!test 1
+      umax= 0.5D0
+      z = max(y,umax)
+      rmDeCroitE =  CoefrmE *sqrt( z*(1.D0-z)) -sqrt( umax*(1.D0-umax) )
+   case(2)  !!test 2
+      umax= 0.5D0
+      z=max(y,umax)
+      rmDeCroitE =  CoefrmE * ( z*(1.D0-z) - umax*(1.D0-umax) )
+   case(3)  !!test 3
+      umax= 0.5D0
+      z=max(y,umax)
+      rmDeCroitE=  CoefrmE * ( (z*(1.D0-z))**2 - (umax*(1.D0-umax))**2 )
+   case(4) !!test 4
+      rmDeCroitE = 0.D0
+   case default
+      stop 'pb rmDeCroitE'
+   end select
+ end function rmDeCroitE
+
+ !=======================
+ function DerrmDeCroitE(y)
+   !=====================
+   USE longr
+   REAL( kind=long) :: y, DerrmDeCroitE, CoefrmE
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case(ChoixAdegE)
+   case(0) !!test 0
+      DerrmDeCroitE = 0.D0
+   case(1)  !!test 1
+      umax= 0.5D0
+      y = min(y,1.0-epsilon)
+      if (y > umax) then
+         DerrmDeCroitE =  CoefrmE * (1-2.D0*y)/(2*sqrt( y*(1.D0-y)))
+      else
+         DerrmDeCroitE = 0.D0
+      end if
+   case(2)  !!test 2
+      umax= 0.5D0
+      if (y > umax) then
+         DerrmDeCroitE =  CoefrmE * (1-2.D0*y)
+      else
+         DerrmDeCroitE = 0.D0
+      end if
+   case(3)  !!test 3
+      umax= 0.5D0
+      if (y > umax) then
+         DerrmDeCroitE =  CoefrmE * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
+      else
+         DerrmDeroit = 0.D0
+      end if
+   case(4) !!test 4
+      DerrmDeroit = 0.D0
+   case default
+      stop 'pb DerrmDeCroitE'
+   end select
+ end function DerrmDeCroitE
 
 
-  end function DerivMu
+ !=======================
+ function DerrmE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, DerrmE, CoefrmE
+   !
+   CoefrmE = sqrt(CoefdiffeAdeg)
+   select case(ChoixAdegE)
+ 
+   case(1)  !!test 1
+      DerrmE = 0.D0
+   case(2)  !!test 2
+      DerrmE = CoefrmE *(1.D0 - 2.D0*y)
+   case(3)  !!test 3
+      DerrmE= CoefrmE * 2.D0*y*(1.D0 -3.D0*y +2.D0*y**2)
+   case default
+      stop 'pb DerrmE'
+   end select
+ end function DerrmE
 
+!=======================
+ function MuE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, MuE
+
+
+   select case(ChoixMuE)
+   case(1)
+      MuE = CoefTranspMuE 
+   case(2)
+      MuE = CoefTranspMuE *y
+   case(3)
+      MuE= CoefTranspMuE *y*(1.D0-y) 
+   case(4)
+      MuE= CoefTranspMuE *y*(1.D0-y)**2
+   case(5)
+      IF ( y <= ubar ) THEN
+         MuE= CoefTranspMuE *y*( 1.D0-(y/ubar)**gamma)
+      ELSE
+         MuE= 0.D0
+      END IF
+      case(6)
+         MuE= CoefTranspMuE *( y*(1.D0-y) )**2
+   case default
+      stop 'pb MuE'
+   end select
+
+ end function MuE
+
+ !=======================
+ function MuCroitE(y)
+   !=======================
+   USE longr
+   implicit none
+   REAL( kind=long) :: y, z, MuCroitE, umax
+   !integer :: choix
+
+
+
+   select case(ChoixMuE)
+   case(1)
+      MuCroitE = CoefTranspMuE 
+   case(2)
+      MuCroitE = CoefTranspMuE *y
+   case(3)
+      umax= 0.5D0
+      z=min(y,umax)
+      MuCroitE=  CoefTranspMuE * z*(1.D0-z)
+   case(4)
+      umax= 1.D0/3.D0
+      z=min(y,umax)
+      MuCroitE= CoefTranspMuE * z*(1.D0-z)**2
+   case(5)
+      umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
+      z=min(y,umax)
+      IF ( z <= ubar ) THEN
+         MuCroitE= CoefTranspMuE * z*(1.D0-(z/ubar)**gamma)
+      ELSE
+         MuCroitE= 0.D0
+      END IF
+   case(6)
+      umax= 0.5D0
+      z=min(y,umax)
+      MuCroitE=  CoefTranspMuE * (z*(1.D0-z))**2
+   case default
+      stop 'pb MuCroitE'
+   end select
+
+ end function MuCroitE
+
+ !=======================
+ function DerivMuCroitE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, DerivMuCroitE, umax
+   !integer :: choix
+   !
+
+   select case(ChoixMuE)
+   case(1)
+      DerivMuCroitE = 0.D0 
+   case(2)
+      DerivMuCroitE = CoefTranspMuE
+   case(3)
+      umax= 0.5D0
+      if (y <=umax) then
+         DerivMuCroitE =  CoefTranspMuE * (1-2.D0*y)
+      else
+         DerivMuCroitE = 0.D0
+      end if
+   case(4)
+      umax= 1.D0/3.D0
+      if (y < umax) then
+         DerivMuCroitE = CoefTranspMuE * ( (1.D0-y)**2 -2.D0*y*(1.D0-y) )
+      else
+         DerivMuCroitE = 0.D0
+      end if
+   case(5)
+      umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
+      IF (y < umax .AND. y< ubar) THEN !! Although we know that y<=ubar
+         DerivMuCroitE = CoefTranspMuE * (1.D0 - ( gamma+1.D0 )*( (y/ubar)**gamma) )
+      ELSE
+         DerivMuCroitE = 0.D0
+      END IF
+   case(6)
+      umax= 0.5D0
+      if (y <=umax) then
+         DerivMuCroitE =  CoefTranspMuE * 2.D0*y*(1.D0-y)*(1-2.D0*y)
+      else
+         DerivMuCroitE = 0.D0
+      end if
+   case default
+      stop 'pb DerivMuCroitE'
+   end select
+
+ end function DerivMuCroitE
+
+ !=======================
+ function MuDeCroitE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, z, MuDeCroitE, umax
+   !
+
+   select case(ChoixMuE)
+   case(1)
+      MuDeCroitE = 0.D0 
+   case(2)
+      MuDeCroitE = 0.D0
+   case(3)
+      umax= 0.5D0
+      z=max(y,umax)
+      MuDeCroitE=  CoefTranspMuE * ( z*(1.D0-z) - umax*(1.D0-umax) )
+   case(4)
+      umax= 1.D0/3.D0
+      z=max(y,umax)
+      MuDeCroitE= CoefTranspMuE * ( z*(1.D0-z)**2 -umax*(1.D0-umax)**2 ) 
+   case(5)
+      umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
+      z=max(y,umax)
+      IF (z <= ubar ) THEN
+         MuDeCroitE= CoefTranspMuE * ( z*(1.D0-(z/ubar)**gamma) )
+      ELSE
+         MuDeCroitE= 0.D0
+      END IF
+      IF ( umax <= ubar )  THEN
+         MuDeCroitE= MuDeCroitE  - CoefTranspMuE*umax*( 1.D0-(umax/ubar)**gamma ) 
+      END IF
+   case(6)
+      umax= 0.5D0
+      z=max(y,umax)
+      MuDeCroitE=  CoefTranspMuE * ( (z*(1.D0-z))**2 - (umax*(1.D0-umax))**2 )
+   case default
+      stop 'pb MuCroit'
+   end select
+
+ end function MuDeCroitE
+
+ !=======================
+ function DerivMuDeCroitE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y, DerivMuDeCroitE, umax
+   !
+
+   select case(ChoixMuE)
+   case(1)
+      DerivMuDeCroitE = 0.D0 
+   case(2)
+      DerivMuDeCroitE = 0.D0
+   case(3)
+      umax= 0.5D0
+      if (y > umax) then
+         DerivMuDeCroitE =  CoefTranspMuE * (1.D0-2.D0*y)
+      else
+         DerivMuDeCroitE = 0.D0
+      end if
+   case(4)
+      umax= 1.D0/3.D0
+      if (y > umax) then
+         DerivMuDeCroitE = CoefTranspMuE * ( (1.D0-y)**2 -2.D0*y*(1.D0-y) )
+      else
+         DerivMuDeCroitE = 0.D0
+      end if
+   case(5)
+      umax= (ubar)/( (gamma+1.D0)**(1.D0/gamma) )
+      IF (y > umax .AND. y < ubar) THEN
+         DerivMuDeCroitE = CoefTranspMuE* ( 1.D0-(gamma+1.D0)*( (y/ubar)**gamma ) )
+      ELSE
+         DerivMuDeCroitE = 0.D0
+      END IF
+   case(6)
+      umax= 0.5D0
+      if (y > umax) then
+         DerivMuDeCroitE =  CoefTranspMuE * 2.D0*y*(1.D0-y)*(1.D0-2.D0*y)
+      else
+         DerivMuDeCroitE = 0.D0
+      end if
+   case default
+      stop 'pb DerivMuDeCroitE'
+   end select
+
+ end function DerivMuDeCroitE
+
+
+ !=======================
+ function DerivMuE(y)
+   !=======================
+   USE longr
+   REAL( kind=long) :: y,DerivMuE
+
+
+   select case(ChoixMuE)
+   case(1)
+      DerivMuE = 0.D0
+   case(2)
+      DerivMuE = CoefTranspMuE *1.D0
+   case(3)
+      DerivMuE = CoefTranspMuE * ( 1.D0 - 2.D0*y )
+   case(4)
+      DerivMuE = CoefTranspMuE *( 1.D0 - y ) * ( 1.D0 - 3.D0*y )
+   case(5)
+      IF ( y < ubar ) THEN
+         DerivMuE= CoefTranspMuE *( 1.D0-( gamma+ 1.D0 )*( (y/ubar)**gamma ) )
+      ELSE
+         DerivMuE= 0.D0
+      END IF
+   case(6)
+      DerivMuE = CoefTranspMuE * 2.D0 *y*(1.D0-y)*( 1.D0 - 2.D0*y )
+   case default
+      stop 'pb DerivMuE'
+   end select
+ end function DerivMuE
 
 END Module fsource

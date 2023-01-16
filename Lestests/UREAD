@@ -75,9 +75,19 @@ fichiers des segments        = Brain_mesh.2.edge
 fichier coordonnees sommets  = mesh_VF_5.typ1
 
 *-------------------------
-*
-*------------------------           
-CoefDiffV   = 5.D-4 
+*   Coefficients de diffusion
+*------------------------        
+CoefDiffU   = 1.D0
+CoefDiffC   = 8.6D0
+CoefDiffE   = 1.8D-2 
+CoefDiffV   = 8.6D-1 
+CoefDiffWm  = 2.7D-4
+CoefDiffGm  = 13.5D-4
+CoefDiffPs  = 13.5D-3
+
+*-------------------------
+*   Coefficients de réaction
+*------------------------    
 rho1        = 2.7D-1
 beta1       = 1.7D-1
 alpha2      = 1.0D2
@@ -88,6 +98,21 @@ beta3       = 3.1D-3
 alpha4      = 3.4D2
 beta4       = 1.56D1
 gamma4      = 1.4D0
+
+Chypo       = 75D0
+Cnecro      = 50D0
+
+*-------------------------
+*   Traitements
+*------------------------  
+Use_surgery = .true.
+Use_radio = .true.
+Use_chemo = .true.
+
+Dose_radio = 3.1245D5
+Dose_chemo = 1.96D-2
+Gain_radio = 4.D0/3.D0
+
 *--------------------------------
 * Choixpb choix le second membre
 *--------------------------------
@@ -122,7 +147,7 @@ Choixgb      = 3
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanisu      = 1
+choixanisu      = 2
 
 *--------------------------------------
 * choixanisc choix d anisotropie pour c
@@ -135,7 +160,7 @@ choixanisu      = 1
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanisc      = 1
+choixanisc      = 2
 
 *--------------------------------------
 * Choixanise choix d anisotropie pour e
@@ -148,7 +173,7 @@ choixanisc      = 1
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanise      = 1
+choixanise      = 2
 
 *--------------------------------------
 * Choixanisv choix d anisotropie pour v
@@ -161,21 +186,22 @@ choixanise      = 1
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanisv      = 1
+choixanisv      = 2
 
 *----------------------------------
-* choix de la fonction A degeneree
+* choix de la fonction A degeneree pour U
 *----------------------------------
 *  pour a(u) = c  (choix 1)
 *  pour a(u) = c u(1-u)**2 (choix 2)
 *  pour a(u) = c u(1-u)**4 (choix 3)
 *  pour a(u) = c (1+gamma-1)(u/uc)**gamma ) (choix 4)
+*  pour a(u) = c u(1-u) (choix 5)
 *
-ChoixAdeg = 2
-CoefDiffuAdeg (c) = 2.D-2
+ChoixAdegU = 2
+CoefDiffuAdeg (c) = 1.D0
 *
 *----------------------------------
-* choix de la fonction Chi pour le terme de transport
+* choix de la fonction Chi pour le terme de transport pour U 
 *----------------------------------
 *  pour mu(u) = c (choix 1)
 *  pour mu(u) = c u (choix 2)
@@ -185,8 +211,35 @@ CoefDiffuAdeg (c) = 2.D-2
 * chicroit et chiDécroit
 *  pour mu(u) = c [u(1-u)]^2 (choix 6) et pour mu
 *
-ChoixMu = 4
-CoefTranspMu (c) = 1.D0  **5.D-5
+ChoixMuU = 3
+CoefTranspMuU (c) = 1.D0 
+
+*----------------------------------
+* choix de la fonction A degeneree pour E
+*----------------------------------
+*  pour a(e) = c  (choix 1)
+*  pour a(e) = c e(1-e)**2 (choix 2)
+*  pour a(e) = c e(1-e)**4 (choix 3)
+*  pour a(e) = c (1+gamma-1)(e/uc)**gamma ) (choix 4)
+*  pour a(e) = c e(1-e) (choix 5)
+ChoixAdegE = 2
+CoefDiffeAdeg (c) = 1.D0
+*
+*----------------------------------
+* choix de la fonction Chi pour le terme de transport pour E
+*----------------------------------
+*  pour mu(e) = c (choix 1)
+*  pour mu(e) = c e (choix 2)
+*  pour mu(e) = c e(1-e) (choix 3)
+*  pour mu(e) = c e(1-e)^2 (choix 4)
+* (choix 5) c est le choix des flux numériques avec  
+* chicroit et chiDécroit
+*  pour mu(e) = c [e(1-e)]^2 (choix 6) et pour mu
+*
+ChoixMuE = 3
+CoefTranspMuE (c) = 2.25D4
+
+
 u_bar  = 1.D0
 gamma  = 2
 *

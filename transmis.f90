@@ -29,6 +29,7 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
     Integer, intent(in)               :: choixaniu,choixanic,choixanie,choixaniv
     INTEGER                           :: iseg,js,ks, iloc, jloc
     INTEGER                           :: Kvois, Lvois
+    real(kind=long)                   :: AireDK, AireDL
     REAL(kind=long), DIMENSION(2)     :: z
     REAL(kind=long), DIMENSION(4)     :: x, y
     real(kind=long), dimension(Nseg)  :: uSxxK,uSyyK,uSxyK,cSxxK,cSyyK,cSxyK,eSxxK,eSyyK,eSxyK,vSxxK,vSyyK,vSxyK
@@ -52,14 +53,16 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
        !!
        z(1) = (x(1)+x(2)+x(3))/ 3.
        z(2) = (y(1)+y(2)+y(3))/ 3.
+       AireDK = ABS( (x(2)-x(1))* (y(3)-y(1)) - (x(3)-x(1))*(y(2)-y(1)) )/2.D0
        IF (NombvoisSeg(iseg) == 2) THEN
           Lvois = NumTVoisSeg(2,iseg)
           js = NuSeg(1,iseg) ; ks = NuSeg(2,iseg)
           !!
-          x(1) = coordK(1,Lvois) ; y(1) = coordK(2,Lvois)
+          x(4) = coordK(1,Lvois) ; y(4) = coordK(2,Lvois)
           !! 
-          z(1) = (3*z(1) + x(1))/4.
-          z(2) = (3*z(2) + y(1))/4.
+          z(1) = (3*z(1) + x(4))/4.
+          z(2) = (3*z(2) + y(4))/4.
+          AireDL = ABS( (x(2)-x(4))* (y(3)-y(4)) - (x(3)-x(4))*(y(2)-y(4)) )/2.D0
           !!
        END IF
      !-------------------------------------------
@@ -75,6 +78,47 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           uSxxK(iseg)= 1.D0
           uSyyK(iseg) = 1.D0
           uSxyK(iseg)= 0.D0
+
+       case(2)
+          !-----------
+          ! S = d(x)*Id
+          !----------
+          if (TypS(1,NumTVoisSeg(1,iseg)) == 100) then 
+               uSxxK(iseg)= CoefDiffU * CoefDiffGm *AireDK/AireD(iseg)
+               uSyyK(iseg) = CoefDiffU * CoefDiffGm *AireDK/AireD(iseg)
+               uSxyK(iseg)= 0.D0
+          elseif (TypS(1,NumTVoisSeg(1,iseg)) == 200) then 
+               uSxxK(iseg)= CoefDiffU * CoefDiffWm *AireDK/AireD(iseg)
+               uSyyK(iseg) = CoefDiffU * CoefDiffWm *AireDK/AireD(iseg)
+               uSxyK(iseg)= 0.D0
+          elseif (Use_surgery) then 
+               uSxxK(iseg)= CoefDiffU * CoefDiffPs *AireDK/AireD(iseg)
+               uSyyK(iseg) = CoefDiffU * CoefDiffPs *AireDK/AireD(iseg)
+               uSxyK(iseg)= 0.D0
+          else 
+               uSxxK(iseg)= CoefDiffU * CoefDiffWm *AireDK/AireD(iseg)
+               uSyyK(iseg) = CoefDiffU * CoefDiffWm *AireDK/AireD(iseg)
+               uSxyK(iseg)= 0.D0
+          end if
+          if (NombvoisSeg(iseg) == 2) then
+               if (TypS(1,NumTVoisSeg(2,iseg)) == 100) then 
+                    uSxxK(iseg)= uSxxK(iseg) + CoefDiffU * CoefDiffGm *AireDL/AireD(iseg)
+                    uSyyK(iseg) = uSyyK(iseg) + CoefDiffU * CoefDiffGm *AireDL/AireD(iseg)
+                    uSxyK(iseg) = uSxyK(iseg) + 0.D0
+               elseif (TypS(1,NumTVoisSeg(2,iseg)) == 200) then 
+                    uSxxK(iseg)= uSxxK(iseg) + CoefDiffU * CoefDiffWm *AireDL/AireD(iseg)
+                    uSyyK(iseg) = uSyyK(iseg) + CoefDiffU * CoefDiffWm *AireDL/AireD(iseg)
+                    uSxyK(iseg)= uSxyK(iseg) + 0.D0
+               elseif (Use_surgery) then 
+                    uSxxK(iseg)= uSxxK(iseg) + CoefDiffU * CoefDiffPs *AireDL/AireD(iseg)
+                    uSyyK(iseg) = uSyyK(iseg) + CoefDiffU * CoefDiffPs *AireDL/AireD(iseg)
+                    uSxyK(iseg)= uSxyK(iseg) + 0.D0
+               else 
+                    uSxxK(iseg)= uSxxK(iseg) + CoefDiffU * CoefDiffWm *AireDL/AireD(iseg)
+                    uSyyK(iseg) = uSyyK(iseg) + CoefDiffU * CoefDiffWm *AireDL/AireD(iseg)
+                    uSxyK(iseg)= uSxyK(iseg) + 0.D0
+               end if
+          end if
        end select
 
        Select case (choixanic)
@@ -84,6 +128,14 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           !----------
           cSxxK(iseg)= 1.D0
           cSyyK(iseg) = 1.D0
+          cSxyK(iseg)= 0.D0
+
+       case(2) 
+          !-----------
+          ! S = D2* Id
+          !----------
+          cSxxK(iseg)= CoefDiffC
+          cSyyK(iseg) = CoefDiffC
           cSxyK(iseg)= 0.D0
        end select
 
@@ -95,6 +147,46 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           eSxxK(iseg)= 1.D0
           eSyyK(iseg) = 1.D0
           eSxyK(iseg)= 0.D0
+     case(2)
+          !-----------
+          ! S = d(x)*Id
+          !----------
+          if (TypS(1,NumTVoisSeg(1,iseg)) == 100) then 
+               eSxxK(iseg)= CoefDiffE * CoefDiffGm *AireDK/AireD(iseg)
+               eSyyK(iseg) = CoefDiffE * CoefDiffGm *AireDK/AireD(iseg)
+               eSxyK(iseg)= 0.D0
+          elseif (TypS(1,NumTVoisSeg(1,iseg)) == 200) then 
+               eSxxK(iseg)= CoefDiffE * CoefDiffWm *AireDK/AireD(iseg)
+               eSyyK(iseg) = CoefDiffE * CoefDiffWm *AireDK/AireD(iseg)
+               eSxyK(iseg)= 0.D0
+          elseif (Use_surgery) then 
+               eSxxK(iseg)= CoefDiffE * CoefDiffPs *AireDK/AireD(iseg)
+               eSyyK(iseg) = CoefDiffE * CoefDiffPs *AireDK/AireD(iseg)
+               eSxyK(iseg)= 0.D0
+          else 
+               eSxxK(iseg)= CoefDiffE * CoefDiffWm *AireDK/AireD(iseg)
+               eSyyK(iseg) = CoefDiffE * CoefDiffWm *AireDK/AireD(iseg)
+               eSxyK(iseg)= 0.D0
+          end if
+          if (NombvoisSeg(iseg) == 2) then
+               if (TypS(1,NumTVoisSeg(2,iseg)) == 100) then 
+                    eSxxK(iseg)= eSxxK(iseg) + CoefDiffE * CoefDiffGm *AireDL/AireD(iseg)
+                    eSyyK(iseg) = eSyyK(iseg) + CoefDiffE * CoefDiffGm *AireDL/AireD(iseg)
+                    eSxyK(iseg) = eSxyK(iseg) + 0.D0
+               elseif (TypS(1,NumTVoisSeg(2,iseg)) == 200) then 
+                    eSxxK(iseg)= eSxxK(iseg) + CoefDiffE * CoefDiffWm *AireDL/AireD(iseg)
+                    eSyyK(iseg) = eSyyK(iseg) + CoefDiffE * CoefDiffWm *AireDL/AireD(iseg)
+                    eSxyK(iseg)= eSxyK(iseg) + 0.D0
+               elseif (Use_surgery) then 
+                    eSxxK(iseg)= eSxxK(iseg) + CoefDiffE * CoefDiffPs *AireDL/AireD(iseg)
+                    eSyyK(iseg) = eSyyK(iseg) + CoefDiffE * CoefDiffPs *AireDL/AireD(iseg)
+                    eSxyK(iseg)= eSxyK(iseg) + 0.D0
+               else 
+                    eSxxK(iseg)= eSxxK(iseg) + CoefDiffE * CoefDiffWm *AireDL/AireD(iseg)
+                    eSyyK(iseg) = eSyyK(iseg) + CoefDiffE * CoefDiffWm *AireDL/AireD(iseg)
+                    eSxyK(iseg)= eSxyK(iseg) + 0.D0
+               end if
+          end if
        end select
 
        Select case (choixaniv)
@@ -104,6 +196,13 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           !----------
           vSxxK(iseg)= 1.D0
           vSyyK(iseg) = 1.D0
+          vSxyK(iseg)= 0.D0
+       case(2) 
+          !-----------
+          ! S = D4* Id
+          !----------
+          vSxxK(iseg)= CoefDiffV
+          vSyyK(iseg) = CoefDiffV
           vSxyK(iseg)= 0.D0
        end select
     end DO

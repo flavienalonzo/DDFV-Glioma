@@ -144,11 +144,11 @@ case(1)
       elseif (TypS(1,jt) == 200) then 
          CC(jt + NsInt) = 148.D0
       elseif (TypS(1,jt) == 300) then
-         CC(jt + NsInt) = 0.D0
+         CC(jt + NsInt) = 7.D-2
       elseif (TypS(1,jt) == 400) then
-         CC(jt + NsInt) = 0.D0
+         CC(jt + NsInt) = 7.D-2
       elseif (TypS(1,jt) == 500) then
-         CC(jt + NsInt) = 0.D0
+         CC(jt + NsInt) = 7.D-2
       end if
       Do m = 1, typegeomaille
          CC(NuSoK (m,jt)) = CC(NuSoK (m,jt)) + CC(jt + NsInt)
@@ -247,10 +247,10 @@ end Select
      ! condition initiale faite par gbord
      !
      DO is = 1, NsInt
-        VV(is) = 0.D0
+        VV(is) = 1.D-8
      END DO
      DO jt = 1, Nbt
-        VV(jt + NsInt) = 0.D0
+        VV(jt + NsInt) = 1.D-8
      END DO
 
    end select

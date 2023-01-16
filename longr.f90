@@ -9,11 +9,14 @@ module longr
   real (kind = long)     :: dt,pi,epsilon,alpha,beta,ubar
   real (kind = long)     :: rho1,beta1,alpha2,beta2,gamma2,rho3,beta3,alpha4,beta4,gamma4
   real (kind = long)     :: delta, deltau, deltax, deltay, deltaxy, deltaxu, deltayu, deltaxyu
-  real (kind = long)     :: CoefDiffV, CoefDiffuAdeg, CoefTranspMu
+  real (kind = long)     :: CoefDiffU, CoefDiffC, CoefDiffE, CoefDiffV
+  real (kind = long)     :: CoefDiffuAdeg, CoefDiffeAdeg, CoefTranspMuU, CoefTranspMuE
+  real (kind = long)     :: CoefDiffWm, CoefDiffGm, CoefDiffPs, Chypo, Cnecro, Dose_radio, Dose_chemo, Gain_radio
+  logical                :: Use_surgery, Use_radio, Use_chemo
   CHARACTER (len = 80)   :: nom_mesh,nom_ele, nom_node, nom_edge
   CHARACTER (len = 80)   :: nom_usave, FPLOTVTK, nom_upoints, dossiermaillage
   integer                :: choixkscalaire, choixkscalaireu, choixanis, choixanisu, choixanisc, choixanise, choixanisv
-  Integer                :: choixgb, choixpb, choixAdeg, ChoixMu, ChoixCdtBord,Choixdt,ChoixBord,gamma
+  Integer                :: choixgb, choixpb, ChoixAdegU, ChoixAdegE, ChoixMuU, ChoixMuE, ChoixCdtBord,Choixdt,ChoixBord,gamma
   integer, parameter     :: transparent=3, Neumann=2, Dirichlet=1
   integer, parameter     :: len_buffer=80, triangle=3, quadrangle=4
   Integer                :: affichage

@@ -322,11 +322,40 @@ SUBROUTINE  INIT
      stop
   END If
 
+  buffer=lireligne(uread)
+  print*, buffer
+  READ(buffer, *, err = 10)  CoefDiffU
+  CALL prvarr (uprint, 'CoefDiffU                       : ', CoefDiffU)
+  
+  buffer=lireligne(uread)
+  print*, buffer
+  READ(buffer, *, err = 10)  CoefDiffC
+  CALL prvarr (uprint, 'CoefDiffC                       : ', CoefDiffC)
 
+  buffer=lireligne(uread)
+  print*, buffer
+  READ(buffer, *, err = 10)  CoefDiffE
+  CALL prvarr (uprint, 'CoefDiffE                       : ', CoefDiffE)
+  
   buffer=lireligne(uread)
   print*, buffer
   READ(buffer, *, err = 10)  CoefDiffV
   CALL prvarr (uprint, 'CoefDiffV                       : ', CoefDiffV)
+
+  buffer=lireligne(uread)
+  print*, buffer
+  READ(buffer, *, err = 10)  CoefDiffWm
+  CALL prvarr (uprint, 'CoefDiffWm                       : ', CoefDiffWm)
+
+  buffer=lireligne(uread)
+  print*, buffer
+  READ(buffer, *, err = 10)  CoefDiffGm
+  CALL prvarr (uprint, 'CoefDiffGm                       : ', CoefDiffGm)
+
+  buffer=lireligne(uread)
+  print*, buffer
+  READ(buffer, *, err = 10)  CoefDiffPs
+  CALL prvarr (uprint, 'CoefDiffPs                       : ', CoefDiffPs)
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10)  rho1
@@ -368,7 +397,35 @@ SUBROUTINE  INIT
   READ(buffer, *, err = 10)  gamma4
   CALL prvarr (uprint, 'gamma4                            : ', gamma4)
 
-  print*, 'UwU 368'
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  Chypo
+  CALL prvarr (uprint, 'Chypo                            : ', Chypo)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  Cnecro
+  CALL prvarr (uprint, 'Cnecro                            : ', Cnecro)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  Use_surgery
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  Use_radio
+  
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10)  Use_chemo
+
+  print*, Use_surgery,Use_radio,Use_chemo
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) Dose_radio
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) Dose_chemo
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) Gain_radio
+
+  print*, Dose_radio,Dose_chemo,Gain_radio
+
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) choixpb
   CALL prvari (uprint, 'choixpb                         : ', choixpb)
@@ -394,20 +451,36 @@ SUBROUTINE  INIT
   CALL prvari (uprint, 'choixanisv                      : ', choixanisv)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10) choixAdeg
-  CALL prvari (uprint, 'choixAdeg                       : ', choixAdeg)
+  READ(buffer, *, err = 10) ChoixAdegU
+  CALL prvari (uprint, 'ChoixAdegU                       : ', ChoixAdegU)
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) CoefDiffuAdeg
   CALL prvarr (uprint, 'CoefDiffuAdeg                   : ', CoefDiffuAdeg)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10) choixMu
-  CALL prvari (uprint, 'choixMu                         : ', choixMu)
+  READ(buffer, *, err = 10) ChoixMuU
+  CALL prvari (uprint, 'ChoixMuU                         : ', ChoixMuU)
 
   buffer=lireligne(uread)
-  READ(buffer, *, err = 10) CoefTranspMu
-  CALL prvarr (uprint, 'CoefTranspMu                    : ', CoefTranspMu)
+  READ(buffer, *, err = 10) CoefTranspMuU
+  CALL prvarr (uprint, 'CoefTranspMuU                    : ', CoefTranspMuU)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) ChoixAdegE
+  CALL prvari (uprint, 'ChoixAdegE                       : ', ChoixAdegE)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) CoefDiffeAdeg
+  CALL prvarr (uprint, 'CoefDiffeAdeg                   : ', CoefDiffeAdeg)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) ChoixMuE
+  CALL prvari (uprint, 'ChoixMuE                         : ', ChoixMuE)
+
+  buffer=lireligne(uread)
+  READ(buffer, *, err = 10) CoefTranspMuE
+  CALL prvarr (uprint, 'CoefTranspMuE                    : ', CoefTranspMuE)
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) ubar

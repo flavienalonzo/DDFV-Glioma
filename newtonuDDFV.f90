@@ -97,91 +97,91 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                  !-------------------------------
                  ! 1. contribution du triangle iK
                  !-------------------------------
-                 dVKL = coeta * ( xi(Xk(is)) - xi(Xk(js)) )
+                 dVKL = coeta * ( xiU(Xk(is)) - xiU(Xk(js)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 F(iK) = F(iK) + coef*(Adegen(Xk(iK)) - Adegen(Xk(jL))) + &
-                      & dVKLplus*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) + &
-                      & dVKLmoins*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)))
+                 F(iK) = F(iK) + coef*(AdegenU(Xk(iK)) - AdegenU(Xk(jL))) + &
+                      & dVKLplus*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) + &
+                      & dVKLmoins*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)))
                  !! derivee de F(iK) par rapport a Xk(iK)
-                 CoefAjout = coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmCroit(Xk(iK)) + dVKLmoins*DerrmDecroit(Xk(iK))
+                 CoefAjout = coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmCroitU(Xk(iK)) + dVKLmoins*DerrmDeCroitU(Xk(iK))
                  call ajout(iK,iK,CoefAjout, A )
                  !! derivee de F(iK) par rapport a Xk(jL)
-                 CoefAjout = -coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmDeCroit(Xk(jL)) + dVKLmoins*Derrmcroit(Xk(jL))
+                 CoefAjout = -coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmDeCroitU(Xk(jL)) + dVKLmoins*DerrmCroitU(Xk(jL))
                  call ajout(iK,jL,CoefAjout, A )
                  !! derivee de F(iK) par rapport a Xk(is)
-                 CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) &
-                      & + transfer((dVKL<0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) )
+                 CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) &
+                      & + transfer((dVKL<0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) )
                  call ajout(iK,is, CoefAjout, A)
                  !! derivee de F(iK) par rapport a Xk(js)
-                 CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) &
-                      & - transfer((dVKL<0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) )
+                 CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) &
+                      & - transfer((dVKL<0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) )
                  call ajout(iK,js, CoefAjout, A)
                  !-------------------------------
                  ! 2. contribution du triangle jL
                  !-------------------------------
-                 dVKL = coeta * ( xi(Xk(js)) - xi(Xk(is)) )
+                 dVKL = coeta * ( xiU(Xk(js)) - xiU(Xk(is)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 F(jL) = F(jL) + coef*(Adegen(Xk(jL)) - Adegen(Xk(iK))) + &
-                      & dVKLplus*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) + &
-                      & dVKLmoins*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)))
+                 F(jL) = F(jL) + coef*(AdegenU(Xk(jL)) - AdegenU(Xk(iK))) + &
+                      & dVKLplus*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) + &
+                      & dVKLmoins*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)))
                  !! derivee de F(jL) par rapport a Xk(iK)
-                 CoefAjout = -coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmDeCroit(Xk(iK)) + dVKLmoins*Derrmcroit(Xk(iK))
+                 CoefAjout = -coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmDeCroitU(Xk(iK)) + dVKLmoins*DerrmCroitU(Xk(iK))
                  call ajout(jL,iK,CoefAjout, A )
                  !! derivee de F(jL) par rapport a Xk(jL)
-                 CoefAjout = coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmCroit(Xk(jL)) + dVKLmoins*DerrmDecroit(Xk(jL))
+                 CoefAjout = coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmCroitU(Xk(jL)) + dVKLmoins*DerrmDeCroitU(Xk(jL))
                  call ajout(jL,jL,CoefAjout, A )
                  !! derivee de F(jL) par rapport a Xk(is)
-                 CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) &
-                      & -transfer((dVKL<0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) )
+                 CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) &
+                      & -transfer((dVKL<0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) )
                  call ajout(jL,is, CoefAjout, A)
                  !! derivee de F(jL) par rapport a Xk(js)
-                 CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) &
-                      & + transfer((dVKL<0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) )
+                 CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) &
+                      & + transfer((dVKL<0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) )
                  call ajout(jL,js, CoefAjout, A)
                  !-----------------------------
                  ! 3. contribution du sommet is
                  !-----------------------------
                  coef = uTKeLe(iseg)
-                 dVKL = coeta * ( xi(Xk(iK)) - xi(Xk(jL)) )
+                 dVKL = coeta * ( xiU(Xk(iK)) - xiU(Xk(jL)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 F(is) = F(is) + coef*(Adegen(Xk(is)) - Adegen(Xk(js))) + &
-                      & dVKLplus*( rmCroit(Xk(is)) + rmDecroit(Xk(js)) ) + &
-                      & dVKLmoins*( rmCroit(Xk(js)) + rmDecroit(Xk(is)))
+                 F(is) = F(is) + coef*(AdegenU(Xk(is)) - AdegenU(Xk(js))) + &
+                      & dVKLplus*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)) ) + &
+                      & dVKLmoins*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)))
                  !! derivee de F(is) par rapport a Xk(is)
-                 CoefAjout = coef*DerivAdeg(Xk(is))+ dVKLplus*DerrmCroit(Xk(is)) + dVKLmoins*DerrmDecroit(Xk(is))
+                 CoefAjout = coef*DerivAdegU(Xk(is))+ dVKLplus*DerrmCroitU(Xk(is)) + dVKLmoins*DerrmDeCroitU(Xk(is))
                  call ajout(is,is,CoefAjout, A )
                  !! derivee de F(is) par rapport a Xk(js)
-                 CoefAjout = -coef*DerivAdeg(Xk(js))+ dVKLplus*DerrmDeCroit(Xk(js)) + dVKLmoins*Derrmcroit(Xk(js))
+                 CoefAjout = -coef*DerivAdegU(Xk(js))+ dVKLplus*DerrmDeCroitU(Xk(js)) + dVKLmoins*DerrmCroitU(Xk(js))
                  call ajout(is,js,CoefAjout, A )
                  !! derivee de F(is) par rapport a Xk(iK)
-                 CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(iK))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)) ) &
-                      & + transfer((dVKL<0),1)*coeta* rm(Xk(iK))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)) )
+                 CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)) ) &
+                      & + transfer((dVKL<0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)) )
                  call ajout(is,iK, CoefAjout, A)
                  !! derivee de F(is) par rapport a Xk(jL)
-                 CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(jL))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)) ) &
-                      & - transfer((dVKL<0),1)*coeta* rm(Xk(jL))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)) )
+                 CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)) ) &
+                      & - transfer((dVKL<0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)) )
                  call ajout(is,jL, CoefAjout, A)
                  !-----------------------------
                  ! 4. contribution du sommet js
                  !-----------------------------
-                 dVKL = coeta * ( xi(Xk(jL)) - xi(Xk(iK)) )
+                 dVKL = coeta * ( xiU(Xk(jL)) - xiU(Xk(iK)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 F(js) = F(js) + coef*(Adegen(Xk(js)) - Adegen(Xk(is))) + &
-                      & dVKLplus*( rmCroit(Xk(js)) + rmDecroit(Xk(is)) ) + &
-                      & dVKLmoins*( rmCroit(Xk(is)) + rmDecroit(Xk(js)))
+                 F(js) = F(js) + coef*(AdegenU(Xk(js)) - AdegenU(Xk(is))) + &
+                      & dVKLplus*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)) ) + &
+                      & dVKLmoins*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)))
                  !! derivee de F(js) par rapport a Xk(is)
-                 CoefAjout = -coef*DerivAdeg(Xk(is))+ dVKLplus*DerrmDeCroit(Xk(is)) + dVKLmoins*Derrmcroit(Xk(is))
+                 CoefAjout = -coef*DerivAdegU(Xk(is))+ dVKLplus*DerrmDeCroitU(Xk(is)) + dVKLmoins*DerrmCroitU(Xk(is))
                  call ajout(js,is,CoefAjout, A )
                  !! derivee de F(js) par rapport a Xk(js)
-                 CoefAjout = coef*DerivAdeg(Xk(js))+ dVKLplus*DerrmCroit(Xk(js)) + dVKLmoins*DerrmDecroit(Xk(js))
+                 CoefAjout = coef*DerivAdegU(Xk(js))+ dVKLplus*DerrmCroitU(Xk(js)) + dVKLmoins*DerrmDeCroitU(Xk(js))
                  call ajout(js,js,CoefAjout, A )
                  !! derivee de F(js) par rapport a Xk(iK)
-                 CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(iK))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)) ) &
-                      & - transfer((dVKL<0),1)*coeta* rm(Xk(iK))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)) )
+                 CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)) ) &
+                      & - transfer((dVKL<0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)) )
                  call ajout(js,iK, CoefAjout, A)
                  !! derivee de F(js) par rapport a Xk(jL)
-                 CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(jL))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)) ) &
-                      & + transfer((dVKL<0),1)*coeta* rm(Xk(jL))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)) )
+                 CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)) ) &
+                      & + transfer((dVKL<0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)) )
                  call ajout(js,jL, CoefAjout, A)
                  !
               ELSE
@@ -192,58 +192,58 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
-                    dVKL = coeta * ( xi(Xk(is)) - xi(Ubord) )
+                    dVKL = coeta * ( xiU(Xk(is)) - xiU(Ubord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(iK) = F(iK) + coef*(Adegen(Xk(iK)) - Adegen(Xk(jL))) + &
-                         & dVKLplus*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) + &
-                         & dVKLmoins*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)))
+                    F(iK) = F(iK) + coef*(AdegenU(Xk(iK)) - AdegenU(Xk(jL))) + &
+                         & dVKLplus*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) + &
+                         & dVKLmoins*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)))
                     !! derivee de F(iK) par rapport a Xk(iK)
-                    CoefAjout = coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmCroit(Xk(iK)) + dVKLmoins*DerrmDecroit(Xk(iK))
+                    CoefAjout = coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmCroitU(Xk(iK)) + dVKLmoins*DerrmDeCroitU(Xk(iK))
                     call ajout(iK,iK,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(jL)
-                    CoefAjout = -coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmDeCroit(Xk(jL)) + dVKLmoins*Derrmcroit(Xk(jL))
+                    CoefAjout = -coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmDeCroitU(Xk(jL)) + dVKLmoins*DerrmCroitU(Xk(jL))
                     call ajout(iK,jL,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(is)
-                    CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) &
-                         & + transfer((dVKL<0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) )
+                    CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) &
+                         & + transfer((dVKL<0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) )
                     call ajout(iK,is, CoefAjout, A)
                     !-------------------------------
                     ! 2. contribution du triangle jL
                     !-------------------------------
-                    dVKL = coeta * ( xi(Ubord) - xi(Xk(is)) )
+                    dVKL = coeta * ( xiU(Ubord) - xiU(Xk(is)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(jL) = F(jL) + coef*(Adegen(Xk(jL)) - Adegen(Xk(iK))) + &
-                         & dVKLplus*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) + &
-                         & dVKLmoins*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)))
+                    F(jL) = F(jL) + coef*(AdegenU(Xk(jL)) - AdegenU(Xk(iK))) + &
+                         & dVKLplus*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) + &
+                         & dVKLmoins*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)))
                     !! derivee de F(jL) par rapport a Xk(iK)
-                    CoefAjout = -coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmDeCroit(Xk(iK)) + dVKLmoins*Derrmcroit(Xk(iK))
+                    CoefAjout = -coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmDeCroitU(Xk(iK)) + dVKLmoins*DerrmCroitU(Xk(iK))
                     call ajout(jL,iK,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(jL)
-                    CoefAjout = coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmCroit(Xk(jL)) + dVKLmoins*DerrmDecroit(Xk(jL))
+                    CoefAjout = coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmCroitU(Xk(jL)) + dVKLmoins*DerrmDeCroitU(Xk(jL))
                     call ajout(jL,jL,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(is)
-                    CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) &
-                         & - transfer((dVKL<0),1)*coeta* rm(Xk(is))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) )
+                    CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) &
+                         & - transfer((dVKL<0),1)*coeta* rmU(Xk(is))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) )
                     call ajout(jL,is, CoefAjout, A)
                     !-----------------------------
                     ! 3. contribution du sommet is
                     !-----------------------------
                     coef = uTKeLe(iseg)
-                    dVKL = coeta * ( xi(Xk(iK)) - xi(Xk(jL)) )
+                    dVKL = coeta * ( xiU(Xk(iK)) - xiU(Xk(jL)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(is) = F(is) + coef*(Adegen(Xk(is)) - Adegen(Ubord)) + &
-                         & dVKLplus*( rmCroit(Xk(is)) + rmDecroit(Ubord) ) + &
-                         & dVKLmoins*( rmCroit(Ubord) + rmDecroit(Xk(is)))
+                    F(is) = F(is) + coef*(AdegenU(Xk(is)) - AdegenU(Ubord)) + &
+                         & dVKLplus*( rmCroitU(Xk(is)) + rmDeCroitU(Ubord) ) + &
+                         & dVKLmoins*( rmCroitU(Ubord) + rmDeCroitU(Xk(is)))
                     !! derivee de F(is) par rapport a Xk(is)
-                    CoefAjout = coef*DerivAdeg(Xk(is))+ dVKLplus*DerrmCroit(Xk(is)) + dVKLmoins*DerrmDecroit(Xk(is))
+                    CoefAjout = coef*DerivAdegU(Xk(is))+ dVKLplus*DerrmCroitU(Xk(is)) + dVKLmoins*DerrmDeCroitU(Xk(is))
                     call ajout(is,is,CoefAjout, A )
                     !! derivee de F(is) par rapport a Xk(iK)
-                    CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(iK))*( rmCroit(Xk(is)) + rmDecroit(Ubord) ) &
-                         & + transfer((dVKL<0),1)*coeta* rm(Xk(iK))*( rmCroit(Ubord) + rmDecroit(Xk(is)) )
+                    CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Xk(is)) + rmDeCroitU(Ubord) ) &
+                         & + transfer((dVKL<0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Ubord) + rmDeCroitU(Xk(is)) )
                     call ajout(is,iK, CoefAjout, A)
                     !! derivee de F(is) par rapport a Xk(jL)
-                    CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(jL))*( rmCroit(Xk(is)) + rmDecroit(Ubord) ) &
-                         & - transfer((dVKL<0),1)*coeta* rm(Xk(jL))*( rmCroit(Ubord) + rmDecroit(Xk(is)) )
+                    CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Xk(is)) + rmDeCroitU(Ubord) ) &
+                         & - transfer((dVKL<0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Ubord) + rmDeCroitU(Xk(is)) )
                     call ajout(is,jL, CoefAjout, A)
                     !
                  case(neumann)
@@ -261,58 +261,58 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
-                    dVKL = coeta * ( xi(Ubord) - xi(Xk(js)) )
+                    dVKL = coeta * ( xiU(Ubord) - xiU(Xk(js)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(iK) = F(iK) + coef*(Adegen(Xk(iK)) - Adegen(Xk(jL))) + &
-                         & dVKLplus*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) + &
-                         & dVKLmoins*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)))
+                    F(iK) = F(iK) + coef*(AdegenU(Xk(iK)) - AdegenU(Xk(jL))) + &
+                         & dVKLplus*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) + &
+                         & dVKLmoins*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)))
                     !! derivee de F(iK) par rapport a Xk(iK)
-                    CoefAjout = coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmCroit(Xk(iK)) + dVKLmoins*DerrmDecroit(Xk(iK))
+                    CoefAjout = coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmCroitU(Xk(iK)) + dVKLmoins*DerrmDeCroitU(Xk(iK))
                     call ajout(iK,iK,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(jL)
-                    CoefAjout = -coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmDeCroit(Xk(jL)) + dVKLmoins*Derrmcroit(Xk(jL))
+                    CoefAjout = -coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmDeCroitU(Xk(jL)) + dVKLmoins*DerrmCroitU(Xk(jL))
                     call ajout(iK,jL,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(js)
-                    CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) )&
-                         & - transfer((dVKL<0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) )
+                    CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) )&
+                         & - transfer((dVKL<0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) )
                     call ajout(iK,js, CoefAjout, A)
                     !-------------------------------
                     ! 2. contribution du triangle jL
                     !-------------------------------
-                    dVKL = coeta * ( xi(Xk(js)) - xi(Ubord) )
+                    dVKL = coeta * ( xiU(Xk(js)) - xiU(Ubord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(jL) = F(jL) + coef*(Adegen(Xk(jL)) - Adegen(Xk(iK))) + &
-                         & dVKLplus*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) + &
-                         & dVKLmoins*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)))
+                    F(jL) = F(jL) + coef*(AdegenU(Xk(jL)) - AdegenU(Xk(iK))) + &
+                         & dVKLplus*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) + &
+                         & dVKLmoins*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)))
                     !! derivee de F(jL) par rapport a Xk(iK)
-                    CoefAjout = -coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmDeCroit(Xk(iK)) + dVKLmoins*Derrmcroit(Xk(iK))
+                    CoefAjout = -coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmDeCroitU(Xk(iK)) + dVKLmoins*DerrmCroitU(Xk(iK))
                     call ajout(jL,iK,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(jL)
-                    CoefAjout = coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmCroit(Xk(jL)) + dVKLmoins*DerrmDecroit(Xk(jL))
+                    CoefAjout = coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmCroitU(Xk(jL)) + dVKLmoins*DerrmDeCroitU(Xk(jL))
                     call ajout(jL,jL,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(js)
-                    CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) &
-                         & + transfer((dVKL<0),1)*coeta* rm(Xk(js))*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) )
+                    CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) &
+                         & + transfer((dVKL<0),1)*coeta* rmU(Xk(js))*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) )
                     call ajout(jL,js, CoefAjout, A)
                     !-----------------------------
                     ! 3. contribution du sommet js
                     !-----------------------------
                     coef = uTKeLe(iseg)
-                    dVKL = coeta * ( xi(Xk(jL)) - xi(Xk(iK)) )
+                    dVKL = coeta * ( xiU(Xk(jL)) - xiU(Xk(iK)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(js) = F(js) + coef*(Adegen(Xk(js)) - Adegen(Ubord)) + &
-                         & dVKLplus*( rmCroit(Xk(js)) + rmDecroit(Ubord) ) + &
-                         & dVKLmoins*( rmCroit(Ubord) + rmDecroit(Xk(js)))
+                    F(js) = F(js) + coef*(AdegenU(Xk(js)) - AdegenU(Ubord)) + &
+                         & dVKLplus*( rmCroitU(Xk(js)) + rmDeCroitU(Ubord) ) + &
+                         & dVKLmoins*( rmCroitU(Ubord) + rmDeCroitU(Xk(js)))
                     !! derivee de F(js) par rapport a Xk(js)
-                    CoefAjout = coef*DerivAdeg(Xk(js))+ dVKLplus*DerrmCroit(Xk(js)) + dVKLmoins*DerrmDecroit(Xk(js))
+                    CoefAjout = coef*DerivAdegU(Xk(js))+ dVKLplus*DerrmCroitU(Xk(js)) + dVKLmoins*DerrmDeCroitU(Xk(js))
                     call ajout(js,js,CoefAjout, A )
                     !! derivee de F(js) par rapport a Xk(iK)
-                    CoefAjout = -transfer((dVKL>0),1)*coeta* rm(Xk(iK))*( rmCroit(Xk(js)) + rmDecroit(Ubord) ) &
-                         & - transfer((dVKL<0),1)*coeta* rm(Xk(iK))*( rmCroit(Ubord) + rmDecroit(Xk(js)) )
+                    CoefAjout = -transfer((dVKL>0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Xk(js)) + rmDeCroitU(Ubord) ) &
+                         & - transfer((dVKL<0),1)*coeta* rmU(Xk(iK))*( rmCroitU(Ubord) + rmDeCroitU(Xk(js)) )
                     call ajout(js,iK, CoefAjout, A)
                     !! derivee de F(js) par rapport a Xk(jL)
-                    CoefAjout = transfer((dVKL>0),1)*coeta* rm(Xk(jL))*( rmCroit(Xk(js)) + rmDecroit(Ubord) ) &
-                         & + transfer((dVKL<0),1)*coeta* rm(Xk(jL))*( rmCroit(Ubord) + rmDecroit(Xk(js)) )
+                    CoefAjout = transfer((dVKL>0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Xk(js)) + rmDeCroitU(Ubord) ) &
+                         & + transfer((dVKL<0),1)*coeta* rmU(Xk(jL))*( rmCroitU(Ubord) + rmDeCroitU(Xk(js)) )
                     call ajout(js,jL, CoefAjout, A)
                  ELSE ! js se situe encore au bord (un triangle entier sur le bord)
                     Uibord= Gb(is) ; Ujbord= Gb(js)
@@ -320,30 +320,30 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     !-------------------------------
                     ! 1. contribution du triangle iK
                     !-------------------------------
-                    dVKL = coeta * ( xi(Uibord) - xi(Ujbord) )
+                    dVKL = coeta * ( xiU(Uibord) - xiU(Ujbord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(iK) = F(iK) + coef*(Adegen(Xk(iK)) - Adegen(Xk(jL))) + &
-                         & dVKLplus*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)) ) + &
-                         & dVKLmoins*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)))
+                    F(iK) = F(iK) + coef*(AdegenU(Xk(iK)) - AdegenU(Xk(jL))) + &
+                         & dVKLplus*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)) ) + &
+                         & dVKLmoins*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)))
                     !! derivee de F(iK) par rapport a Xk(iK)
-                    CoefAjout = coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmCroit(Xk(iK)) + dVKLmoins*DerrmDecroit(Xk(iK))
+                    CoefAjout = coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmCroitU(Xk(iK)) + dVKLmoins*DerrmDeCroitU(Xk(iK))
                     call ajout(iK,iK,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(jL)
-                    CoefAjout = -coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmDeCroit(Xk(jL)) + dVKLmoins*Derrmcroit(Xk(jL))
+                    CoefAjout = -coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmDeCroitU(Xk(jL)) + dVKLmoins*DerrmCroitU(Xk(jL))
                     call ajout(iK,jL,CoefAjout, A )
                     !-------------------------------
                     ! 2. contribution du triangle jL
                     !-------------------------------
-                    dVKL = coeta * ( xi(Ujbord) - xi(Uibord) )
+                    dVKL = coeta * ( xiU(Ujbord) - xiU(Uibord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    F(jL) = F(jL) + coef*(Adegen(Xk(jL)) - Adegen(Xk(iK))) + &
-                         & dVKLplus*( rmCroit(Xk(jL)) + rmDecroit(Xk(iK)) ) + &
-                         & dVKLmoins*( rmCroit(Xk(iK)) + rmDecroit(Xk(jL)))
+                    F(jL) = F(jL) + coef*(AdegenU(Xk(jL)) - AdegenU(Xk(iK))) + &
+                         & dVKLplus*( rmCroitU(Xk(jL)) + rmDeCroitU(Xk(iK)) ) + &
+                         & dVKLmoins*( rmCroitU(Xk(iK)) + rmDeCroitU(Xk(jL)))
                     !! derivee de F(jL) par rapport a Xk(iK)
-                    CoefAjout = -coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmDeCroit(Xk(iK)) + dVKLmoins*Derrmcroit(Xk(iK))
+                    CoefAjout = -coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmDeCroitU(Xk(iK)) + dVKLmoins*DerrmCroitU(Xk(iK))
                     call ajout(jL,iK,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(jL)
-                    CoefAjout = coef*DerivAdeg(Xk(jL))+ dVKLplus*DerrmCroit(Xk(jL)) + dVKLmoins*DerrmDecroit(Xk(jL))
+                    CoefAjout = coef*DerivAdegU(Xk(jL))+ dVKLplus*DerrmCroitU(Xk(jL)) + dVKLmoins*DerrmDeCroitU(Xk(jL))
                     call ajout(jL,jL,CoefAjout, A )
                  END IF
               case(neumann)
@@ -360,13 +360,13 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
            !-------------------------------
            ! 1. contribution du triangle iK
            !-------------------------------
-           dVKL = coeta * ( xi(Uibord) - xi(Ujbord) )
+           dVKL = coeta * ( xiU(Uibord) - xiU(Ujbord) )
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-           F(iK) = F(iK) + coef*(Adegen(Xk(iK)) - Adegen(Ubord)) + &
-                & dVKLplus*( rmCroit(Xk(iK)) + rmDecroit(Ubord) ) + &
-                & dVKLmoins*( rmCroit(Ubord) + rmDecroit(Xk(iK)))
+           F(iK) = F(iK) + coef*(AdegenU(Xk(iK)) - AdegenU(Ubord)) + &
+                & dVKLplus*( rmCroitU(Xk(iK)) + rmDeCroitU(Ubord) ) + &
+                & dVKLmoins*( rmCroitU(Ubord) + rmDeCroitU(Xk(iK)))
            !! derivee de F(iK) par rapport a Xk(iK)
-           CoefAjout = coef*DerivAdeg(Xk(iK))+ dVKLplus*DerrmCroit(Xk(iK)) + dVKLmoins*DerrmDecroit(Xk(iK))
+           CoefAjout = coef*DerivAdegU(Xk(iK))+ dVKLplus*DerrmCroitU(Xk(iK)) + dVKLmoins*DerrmDeCroitU(Xk(iK))
            call ajout(iK,iK,CoefAjout, A )
            !!
         case (neumann)
@@ -381,38 +381,38 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
            !-----------------------------
            ! 2. contribution du sommet is
            !----------------------------- 
-           dVKL = ((coeta**2)/coef) * ( xi(Xk(js)) - xi(Xk(is)) )
+           dVKL = ((coeta**2)/coef) * ( xiU(Xk(js)) - xiU(Xk(is)) )
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-           F(is) = F(is) + coefe*(Adegen(Xk(is)) - Adegen(Xk(js))) + &
-                & dVKLplus*( rmCroit(Xk(is)) + rmDecroit(Xk(js)) ) + &
-                & dVKLmoins*( rmCroit(Xk(js)) + rmDecroit(Xk(is)))
+           F(is) = F(is) + coefe*(AdegenU(Xk(is)) - AdegenU(Xk(js))) + &
+                & dVKLplus*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)) ) + &
+                & dVKLmoins*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)))
            !! derivee de F(is) par rapport a Xk(is)
-           CoefAjout = coefe*DerivAdeg(Xk(is))+ dVKLplus*DerrmCroit(Xk(is)) + dVKLmoins*DerrmDecroit(Xk(is)) &
-                & - transfer((dVKL>0),1)*((coeta**2)/coef)* rm(Xk(is))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)))&
-                & - transfer((dVKL<0),1)*((coeta**2)/coef)* rm(Xk(is))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)))
+           CoefAjout = coefe*DerivAdegU(Xk(is))+ dVKLplus*DerrmCroitU(Xk(is)) + dVKLmoins*DerrmDeCroitU(Xk(is)) &
+                & - transfer((dVKL>0),1)*((coeta**2)/coef)* rmU(Xk(is))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)))&
+                & - transfer((dVKL<0),1)*((coeta**2)/coef)* rmU(Xk(is))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)))
            call ajout(is,is,CoefAjout, A )
            !! derivee de F(is) par rapport a Xk(js)
-           CoefAjout = -coefe*DerivAdeg(Xk(js))+ dVKLplus*DerrmDecroit(Xk(js)) + dVKLmoins*DerrmCroit(Xk(js))&
-                & + transfer((dVKL>0),1)*((coeta**2)/coef)* rm(Xk(js))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)))&
-                & + transfer((dVKL<0),1)*((coeta**2)/coef)* rm(Xk(js))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)))
+           CoefAjout = -coefe*DerivAdegU(Xk(js))+ dVKLplus*DerrmDeCroitU(Xk(js)) + dVKLmoins*DerrmCroitU(Xk(js))&
+                & + transfer((dVKL>0),1)*((coeta**2)/coef)* rmU(Xk(js))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)))&
+                & + transfer((dVKL<0),1)*((coeta**2)/coef)* rmU(Xk(js))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)))
            call ajout(is,js,CoefAjout, A )
            !-----------------------------
            ! 3. contribution du sommet js
            !-----------------------------
-           dVKL = ((coeta**2)/coef) * ( xi(Xk(is)) - xi(Xk(js)) )
+           dVKL = ((coeta**2)/coef) * ( xiU(Xk(is)) - xiU(Xk(js)) )
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-           F(js) = F(js) + coefe*(Adegen(Xk(js)) - Adegen(Xk(is))) + &
-                & dVKLplus*( rmCroit(Xk(js)) + rmDecroit(Xk(is)) ) + &
-                & dVKLmoins*( rmCroit(Xk(is)) + rmDecroit(Xk(js)))
+           F(js) = F(js) + coefe*(AdegenU(Xk(js)) - AdegenU(Xk(is))) + &
+                & dVKLplus*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)) ) + &
+                & dVKLmoins*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)))
            !! derivee de F(js) par rapport a Xk(is)
-           CoefAjout = -coefe*DerivAdeg(Xk(is))+ dVKLplus*DerrmDecroit(Xk(is)) + dVKLmoins*DerrmCroit(Xk(is))&
-                & + transfer((dVKL>0),1)*((coeta**2)/coef)* rm(Xk(is))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)))&
-                & + transfer((dVKL<0),1)*((coeta**2)/coef)* rm(Xk(is))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)))
+           CoefAjout = -coefe*DerivAdegU(Xk(is))+ dVKLplus*DerrmDeCroitU(Xk(is)) + dVKLmoins*DerrmCroitU(Xk(is))&
+                & + transfer((dVKL>0),1)*((coeta**2)/coef)* rmU(Xk(is))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)))&
+                & + transfer((dVKL<0),1)*((coeta**2)/coef)* rmU(Xk(is))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)))
            call ajout(js,is,CoefAjout, A )
            !! derivee de F(js) par rapport a Xk(js)
-           CoefAjout = coefe*DerivAdeg(Xk(js))+ dVKLplus*DerrmCroit(Xk(js)) + dVKLmoins*DerrmDecroit(Xk(js)) &
-                & - transfer((dVKL>0),1)*((coeta**2)/coef)* rm(Xk(js))*( rmCroit(Xk(js)) + rmDecroit(Xk(is)))&
-                & - transfer((dVKL<0),1)*((coeta**2)/coef)* rm(Xk(js))*( rmCroit(Xk(is)) + rmDecroit(Xk(js)))
+           CoefAjout = coefe*DerivAdegU(Xk(js))+ dVKLplus*DerrmCroitU(Xk(js)) + dVKLmoins*DerrmDeCroitU(Xk(js)) &
+                & - transfer((dVKL>0),1)*((coeta**2)/coef)* rmU(Xk(js))*( rmCroitU(Xk(js)) + rmDeCroitU(Xk(is)))&
+                & - transfer((dVKL<0),1)*((coeta**2)/coef)* rmU(Xk(js))*( rmCroitU(Xk(is)) + rmDeCroitU(Xk(js)))
            call ajout(js,js,CoefAjout, A )
         END Select
      END Do
@@ -438,14 +438,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                  dVKL = coef*(ln(Cm(jL)) - ln(Cm(iK))) + &
                       & coeta*(ln(Cm(js)) - ln(Cm(is)))
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
-                      & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
+                 FKL = dVKLplus*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) ) + &
+                      & dVKLmoins*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) )
                  F(iK) = F(iK) + RDVT* FKL
                  !! derivee de F(iK) par rapport a Xk(iK)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(iK)) + dVKLmoins*DerivMuDecroit(Xk(iK)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(iK)) + dVKLmoins*DerivMuDeCroitU(Xk(iK)))
                  call ajout(iK,iK,CoefAjout, A )
                  !! derivee de F(iK) par rapport a Xk(jL)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(jL)) + dVKLmoins*DerivMuCroit(Xk(jL)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(jL)) + dVKLmoins*DerivMuCroitU(Xk(jL)))
                  call ajout(iK,jL,CoefAjout, A )
                  !-------------------------------
                  ! 2. contribution du triangle jL
@@ -453,14 +453,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                  dVKL = coef*(ln(Cm(iK)) - ln(Cm(jL))) + &
                       & coeta * ( ln(Cm(is)) - ln(Cm(js)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
-                      & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
+                 FKL = dVKLplus*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) ) + &
+                      & dVKLmoins*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) )
                  F(jL) = F(jL) + RDVT* FKL
                  !! derivee de F(jL) par rapport a Xk(jL)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(jL)) + dVKLmoins*DerivMuDecroit(Xk(jL)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(jL)) + dVKLmoins*DerivMuDeCroitU(Xk(jL)))
                  call ajout(jL,jL,CoefAjout, A )
                  !! derivee de F(jL) par rapport a Xk(iK)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(iK)) + dVKLmoins*DerivMuCroit(Xk(iK)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(iK)) + dVKLmoins*DerivMuCroitU(Xk(iK)))
                  call ajout(jL,iK,CoefAjout, A )
                  !-----------------------------
                  ! 3. contribution du sommet is
@@ -469,14 +469,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                  dVKL = coef*(ln(Cm(js)) - ln(Cm(is))) + &
                       & coeta * ( ln(Cm(jL)) - ln(Cm(iK)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 FKL = dVKLplus*( MuCroit(Xk(is)) + MuDecroit(Xk(js)) ) + &
-                      & dVKLmoins*( MuCroit(Xk(js)) + MuDecroit(Xk(is)) )
+                 FKL = dVKLplus*( MuCroitU(Xk(is)) + MuDeCroitU(Xk(js)) ) + &
+                      & dVKLmoins*( MuCroitU(Xk(js)) + MuDeCroitU(Xk(is)) )
                  F(is) = F(is) + RDVT* FKL
                  !! derivee de F(is) par rapport a Xk(is)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(is)) + dVKLmoins*DerivMuDecroit(Xk(is)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(is)) + dVKLmoins*DerivMuDeCroitU(Xk(is)))
                  call ajout(is,is,CoefAjout, A )
                  !! derivee de F(is) par rapport a Xk(js)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(js)) + dVKLmoins*DerivMuCroit(Xk(js)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(js)) + dVKLmoins*DerivMuCroitU(Xk(js)))
                  call ajout(is,js,CoefAjout, A )
                  !----------------------- -----
                  ! 4. contribution du sommet js
@@ -484,14 +484,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                  dVKL = coef*(ln(Cm(is)) - ln(Cm(js))) + &
                       & coeta * ( ln(Cm(iK)) - ln(Cm(jL)) )
                  dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                 FKL = dVKLplus*( MuCroit(Xk(js)) + MuDecroit(Xk(is)) ) + &
-                      & dVKLmoins*( MuCroit(Xk(is)) + MuDecroit(Xk(js)) )
+                 FKL = dVKLplus*( MuCroitU(Xk(js)) + MuDeCroitU(Xk(is)) ) + &
+                      & dVKLmoins*( MuCroitU(Xk(is)) + MuDeCroitU(Xk(js)) )
                  F(js) = F(js) + RDVT* FKL
                  !! derivee de F(js) par rapport a Xk(js)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(js)) + dVKLmoins*DerivMuDecroit(Xk(js)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(js)) + dVKLmoins*DerivMuDeCroitU(Xk(js)))
                  call ajout(js,js,CoefAjout, A )
                  !! derivee de F(js) par rapport a Xk(is)
-                 CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(is)) + dVKLmoins*DerivMuCroit(Xk(is)))
+                 CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(is)) + dVKLmoins*DerivMuCroitU(Xk(is)))
                  call ajout(js,is,CoefAjout, A )
               ELSE
                  Select case ( Ntyps(js) ) 
@@ -505,14 +505,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Cm(jL)) - ln(Cm(iK))) + &
                          & coeta * ( ln(Ubord) - ln(Cm(is)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
-                         & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) ) + &
+                         & dVKLmoins*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) )
                     F(iK) = F(iK) + RDVT* FKL
                     !! derivee de F(iK) par rapport a Xk(iK)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(iK)) + dVKLmoins*DerivMuDecroit(Xk(iK)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(iK)) + dVKLmoins*DerivMuDeCroitU(Xk(iK)))
                     call ajout(iK,iK,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(jL)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(jL)) + dVKLmoins*DerivMuCroit(Xk(jL)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(jL)) + dVKLmoins*DerivMuCroitU(Xk(jL)))
                     call ajout(iK,jL,CoefAjout, A )
                     !-------------------------------
                     ! 2. contribution du triangle jL
@@ -520,14 +520,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Cm(iK)) - ln(Cm(jL))) + &
                          & coeta * ( ln(Cm(is)) - ln(Ubord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
-                         & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) ) + &
+                         & dVKLmoins*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) )
                     F(jL) = F(jL) + RDVT* FKL
                     !! derivee de F(jL) par rapport a Xk(jL)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(jL)) + dVKLmoins*DerivMuDecroit(Xk(jL)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(jL)) + dVKLmoins*DerivMuDeCroitU(Xk(jL)))
                     call ajout(jL,jL,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(iK)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(iK)) + dVKLmoins*DerivMuCroit(Xk(iK)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(iK)) + dVKLmoins*DerivMuCroitU(Xk(iK)))
                     call ajout(jL,iK,CoefAjout, A )
                     !-----------------------------
                     ! 3. contribution du sommet is
@@ -536,11 +536,11 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Ubord) - ln(Cm(is))) + &
                          & coeta * ( ln(Cm(jL)) - ln(Cm(iK)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(is)) + MuDecroit(Ubord) ) + &
-                         & dVKLmoins*( MuCroit(Ubord) + MuDecroit(Xk(is)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(is)) + MuDeCroitU(Ubord) ) + &
+                         & dVKLmoins*( MuCroitU(Ubord) + MuDeCroitU(Xk(is)) )
                     F(is) = F(is) + RDVT* FKL
                     !! derivee de F(is) par rapport a Xk(is)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(is)) + dVKLmoins*DerivMuDecroit(Xk(is)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(is)) + dVKLmoins*DerivMuDeCroitU(Xk(is)))
                     call ajout(is,is,CoefAjout, A )
                  case(neumann)
                     ! on fait rien
@@ -561,14 +561,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Cm(jL)) - ln(Cm(iK))) + &
                          & coeta * ( ln(Cm(js)) - ln(Ubord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
-                         & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) ) + &
+                         & dVKLmoins*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) )
                     F(iK) = F(iK) + RDVT* FKL
                     !! derivee de F(iK) par rapport a Xk(iK)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(iK)) + dVKLmoins*DerivMuDecroit(Xk(iK)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(iK)) + dVKLmoins*DerivMuDeCroitU(Xk(iK)))
                     call ajout(iK,iK,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(jL)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(jL)) + dVKLmoins*DerivMuCroit(Xk(jL)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(jL)) + dVKLmoins*DerivMuCroitU(Xk(jL)))
                     call ajout(iK,jL,CoefAjout, A )
                     !-------------------------------
                     ! 2. contribution du triangle jL
@@ -576,14 +576,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Cm(iK)) - ln(Cm(jL))) + &
                          & coeta * ( ln(Ubord) - ln(Cm(js)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
-                         & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) ) + &
+                         & dVKLmoins*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) )
                     F(jL) = F(jL) + RDVT* FKL
                     !! derivee de F(jL) par rapport a Xk(jL)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(jL)) + dVKLmoins*DerivMuDecroit(Xk(jL)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(jL)) + dVKLmoins*DerivMuDeCroitU(Xk(jL)))
                     call ajout(jL,jL,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(iK)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(iK)) + dVKLmoins*DerivMuCroit(Xk(iK)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(iK)) + dVKLmoins*DerivMuCroitU(Xk(iK)))
                     call ajout(jL,iK,CoefAjout, A )
                     !-----------------------------
                     ! 3. contribution du sommet js
@@ -592,11 +592,11 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Ubord) - ln(Cm(js))) + &
                          & coeta * ( ln(Cm(iK)) - ln(Cm(jL)) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(js)) + MuDecroit(Ubord) ) + &
-                         & dVKLmoins*( MuCroit(Ubord) + MuDecroit(Xk(js)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(js)) + MuDeCroitU(Ubord) ) + &
+                         & dVKLmoins*( MuCroitU(Ubord) + MuDeCroitU(Xk(js)) )
                     F(js) = F(js) + RDVT* FKL
                     !! derivee de F(js) par rapport a Xk(js)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(js)) + dVKLmoins*DerivMuDecroit(Xk(js)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(js)) + dVKLmoins*DerivMuDeCroitU(Xk(js)))
                     call ajout(js,js,CoefAjout, A )
                  ELSE ! js se situe encore au bord (un triangle entier sur le bord)
                     Uibord= Gb(is) ; Ujbord= Gb(js)
@@ -608,14 +608,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Cm(jL)) - ln(Cm(iK))) + &
                          & coeta * ( ln(Ujbord) - ln(Uibord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) ) + &
-                         & dVKLmoins*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) ) + &
+                         & dVKLmoins*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) )
                     F(iK) = F(iK) + RDVT* FKL
                     !! derivee de F(iK) par rapport a Xk(iK)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(iK)) + dVKLmoins*DerivMuDecroit(Xk(iK)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(iK)) + dVKLmoins*DerivMuDeCroitU(Xk(iK)))
                     call ajout(iK,iK,CoefAjout, A )
                     !! derivee de F(iK) par rapport a Xk(jL)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(jL)) + dVKLmoins*DerivMuCroit(Xk(jL)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(jL)) + dVKLmoins*DerivMuCroitU(Xk(jL)))
                     call ajout(iK,jL,CoefAjout, A )
                     !-------------------------------
                     ! 2. contribution du triangle jL
@@ -623,14 +623,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
                     dVKL = coef*(ln(Cm(iK)) - ln(Cm(jL))) + &
                          & coeta * ( ln(Uibord) - ln(Ujbord) )
                     dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-                    FKL = dVKLplus*( MuCroit(Xk(jL)) + MuDecroit(Xk(iK)) ) + &
-                         & dVKLmoins*( MuCroit(Xk(iK)) + MuDecroit(Xk(jL)) )
+                    FKL = dVKLplus*( MuCroitU(Xk(jL)) + MuDeCroitU(Xk(iK)) ) + &
+                         & dVKLmoins*( MuCroitU(Xk(iK)) + MuDeCroitU(Xk(jL)) )
                     F(jL) = F(jL) + RDVT* FKL
                     !! derivee de F(jL) par rapport a Xk(jL)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(jL)) + dVKLmoins*DerivMuDecroit(Xk(jL)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(jL)) + dVKLmoins*DerivMuDeCroitU(Xk(jL)))
                     call ajout(jL,jL,CoefAjout, A )
                     !! derivee de F(jL) par rapport a Xk(iK)
-                    CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(iK)) + dVKLmoins*DerivMuCroit(Xk(iK)))
+                    CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(iK)) + dVKLmoins*DerivMuCroitU(Xk(iK)))
                     call ajout(jL,iK,CoefAjout, A )
                  END IF
               case(neumann)
@@ -651,11 +651,11 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
            dVKL = coef*(ln(Ubord) - ln(Cm(iK))) + &
                 & coeta * ( ln(Ujbord) - ln(Uibord) )
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-           FKL = dVKLplus*( MuCroit(Xk(iK)) + MuDecroit(Ubord) ) + &
-                & dVKLmoins*( MuCroit(Ubord) + MuDecroit(Xk(iK)) )
+           FKL = dVKLplus*( MuCroitU(Xk(iK)) + MuDeCroitU(Ubord) ) + &
+                & dVKLmoins*( MuCroitU(Ubord) + MuDeCroitU(Xk(iK)) )
            F(iK) = F(iK) + RDVT* FKL
            !! derivee de F(iK) par rapport a Xk(iK)
-           CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(iK)) + dVKLmoins*DerivMuDecroit(Xk(iK)))
+           CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(iK)) + dVKLmoins*DerivMuDeCroitU(Xk(iK)))
            call ajout(iK,iK,CoefAjout, A )
            !!
         case (neumann)
@@ -674,28 +674,28 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
            coefe = (coefe - (coeta**2)/coef)
            dVKL = coefe*(ln(Cm(js)) - ln(Cm(is)))
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-           FKL = dVKLplus*( MuCroit(Xk(is)) + MuDecroit(Xk(js)) ) + &
-                & dVKLmoins*( MuCroit(Xk(js)) + MuDecroit(Xk(is)) )
+           FKL = dVKLplus*( MuCroitU(Xk(is)) + MuDeCroitU(Xk(js)) ) + &
+                & dVKLmoins*( MuCroitU(Xk(js)) + MuDeCroitU(Xk(is)) )
            F(is) = F(is) + RDVT* FKL
            !! derivee de F(is) par rapport a Xk(is)
-           CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(is)) + dVKLmoins*DerivMuDecroit(Xk(is)))
+           CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(is)) + dVKLmoins*DerivMuDeCroitU(Xk(is)))
            call ajout(is,is,CoefAjout, A )
            !! derivee de F(is) par rapport a Xk(js)
-           CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(js)) + dVKLmoins*DerivMuCroit(Xk(js)))
+           CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(js)) + dVKLmoins*DerivMuCroitU(Xk(js)))
            call ajout(is,js,CoefAjout, A )
            !-----------------------------
            ! 3. contribution du sommet js
            !-----------------------------
            dVKL = coefe*(ln(Cm(is)) - ln(Cm(js)))
            dVKLplus = max(dVKL, 0.D0) ; dVKLmoins = min(dVKL, 0.D0)
-           FKL = dVKLplus*( MuCroit(Xk(js)) + MuDecroit(Xk(is))) + &
-                & dVKLmoins*( MuCroit(Xk(is)) + MuDecroit(Xk(js)))
+           FKL = dVKLplus*( MuCroitU(Xk(js)) + MuDeCroitU(Xk(is))) + &
+                & dVKLmoins*( MuCroitU(Xk(is)) + MuDeCroitU(Xk(js)))
            F(js) = F(js) + RDVT* FKL
            !! derivee de F(js) par rapport a Xk(js)
-           CoefAjout = RDVT*(dVKLplus*DerivMuCroit(Xk(js)) + dVKLmoins*DerivMuDecroit(Xk(js)))
+           CoefAjout = RDVT*(dVKLplus*DerivMuCroitU(Xk(js)) + dVKLmoins*DerivMuDeCroitU(Xk(js)))
            call ajout(js,js,CoefAjout, A )
            !! derivee de F(js) par rapport a Xk(is)
-           CoefAjout = RDVT*(dVKLplus*DerivMuDecroit(Xk(is)) + dVKLmoins*DerivMuCroit(Xk(is)))
+           CoefAjout = RDVT*(dVKLplus*DerivMuDeCroitU(Xk(is)) + dVKLmoins*DerivMuCroitU(Xk(is)))
            call ajout(js,is,CoefAjout, A )
         END Select
      END Do

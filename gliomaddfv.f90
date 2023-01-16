@@ -3,9 +3,9 @@
 !            *************************
 !******************************************************************************
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
-!     *-!!!!!!!!!!!!!@!!@!!!@!!!!!!@!!@!!!@!!!!!!!!!!!-*
-!     *-!!!!!!!!!@@@@@!!@!!!@!!@@@@@!!@!!!@!!!!!!!!!!!-*
-!     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!@!!!@!!!!!!!!!!!-*
+!     *-!!!!!!!!!!!!!@!!@!!!@!!!!!!@!!!!!!@!!!!!!!!!!!-*
+!     *-!!!!!!!!!@@@@@!!@!!!@!!@@@@@!!@@@@@!!!!!!!!!!!-*
+!     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!!!!!@!!!!!!!!!!!-*
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
 !------------------------------------------------------------
 !     * Programme resoud le syst�me de chimiotaxie anisotropic
@@ -140,7 +140,10 @@ PROGRAM GLIOMADDFV
         NormL1C(niter) = NormL1C(niter) + AireK(jt)*C(ii)/2
         NormL1E(niter) = NormL1E(niter) + AireK(jt)*E(ii)/2
      END DO
-     !
+     ! Perform the surgery
+     if (Abs(Tempsactuel-1.D0)<=dt/2.D0 .and. Use_surgery .and. Tempsactuel>=1.D0) then
+         call surge(U,C,E,V,NbInc)
+     end if
      !IF (niter == 2) epsilon = 1.D-12
      !IF (MINVAL(U)>=-1.D-12 .AND. MINVAL(U)< 0) U = 0.D0
      !IF (MINVAL(V)>=-1.D-12 .AND. MINVAL(V)< 0) V = 0.D0
@@ -253,7 +256,3 @@ PROGRAM GLIOMADDFV
   print*,'finish',start,finish,finish-start
   PRINT '("Fin du travail Keller-Segel en ",f10.3," secondes.")',finish-start
 END PROGRAM GLIOMADDFV
-
-
-
-
