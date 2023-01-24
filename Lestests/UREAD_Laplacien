@@ -1,0 +1,317 @@
+*-------------------------------------------------------------------------
+*     Donnees pour le probleme  de laplace sur un domaine qcq
+*        par la methode des elements finis P_1
+*       equation :
+*       dt u - div(S(x)a(u)D u) + div(S(x)chi(u) D(v)= f(u)         dans omega
+*       dt v - d div(S(x) v) = g(u,v)= alpha u - beta v
+*             u = Gb        sur le bord
+*   Une ligne de commentaire commence par * ou % ou ! ou #
+*    Affectaion des variables sous la forme suivante 
+*        variable = valeur 
+* attentiooooonnnnnnn:ici j ai fait amatlocv pour v pour sue M=Id toujours
+*--------------------------------------------------------------------------
+
+*------------------------------------------------------
+* Selection de l option du maillage
+*------------------------------------------------------
+* 0 : pour rentrer le maillage en utilisant UREAD
+* 1 : pour une selection automatique dans ./sabor
+
+selec_mesh            = 0
+*------------------------------------------------------
+* Choix du pas de temps: Choixdt
+*------------------------------------------------------
+* 0 : dt est donné par dt = 0.1*h^2
+* 1 : un pas de temps à être fixer dans UREAD
+
+Choixdt            = 1
+dt                = 0.02
+*------------------------------------------------------
+* ChoixBord
+*------------------------------------------------------
+* 0 : ChoixBord à être fixer dans sabor
+* 1 : ChoixBord à être fixer dans UREAD
+
+ChoixBord          = 1
+
+*ChoixCdtBord (1=dirichlet, 2=Neumann)
+
+ChoixCdtBord       = 2
+*------------------------------------------------------
+
+Nombre iteration en temps (nbitertemps) = 300
+
+*------------------------------------------------------
+CFDT               = 1.D0
+epsilon            = 1.D-8
+Tolerencegradient  = 1.D-13
+TolerenceNewton    = 1.D-9
+Tolerenceiterative = 1.D-5
+ItermaxNewton      = 1000
+
+*------------------------------------------------------
+* Nom du repertoire ou se trouve les maillages
+*------------------------------------------------------
+
+dossiermaillage = ./MESH/
+
+*-----------------------------------------------
+* maillage triangulaire : les noms des fichiers
+*----------------------------------------------
+** Maillage_Format 
+** 1 pour  maillage du logiciel triangle
+** 2 pour  maillage donne (Boyer)
+
+Maillage_Format   =  2
+*---------------------------------------------------------------------
+*---option 1 ----- Si maillage du logiciel triangle (0,1)x(0,1)-------
+*---------------------------------------------------------------------
+fichier coordonnees sommets  = carre.1.ele    
+fichier centre des triangles = carre.1.node
+fichiers des segments        = carre.1.edge
+
+*---option 2 ----- Si maillage de Boyer (Benchmark) (0,1)x(0,1)---------
+
+fichier coordonnees sommets  = mesh_tri_1.typ1
+
+*-------------------------
+*   Coefficients de diffusion
+*------------------------        
+CoefDiffU   = 1.D-3
+CoefDiffC   = 0.D0
+CoefDiffE   = 0.D-2 
+CoefDiffV   = 0.D-1 
+CoefDiffWm  = 1.D0
+CoefDiffGm  = 1.D0
+CoefDiffPs  = 1.D0
+
+*-------------------------
+*   Coefficients de réaction
+*------------------------    
+rho1        = 0.D0
+beta1       = 0.D0
+alpha2      = 0.D0
+beta2       = 0.D0
+gamma2      = 0.D0
+rho3        = 0.D0
+beta3       = 0.D0
+alpha4      = 0.D0
+beta4       = 0.D0
+gamma4      = 0.D0
+
+Chypo       = 75D0
+Cnecro      = 50D0
+
+*-------------------------
+*   Traitements
+*------------------------  
+Use_surgery = .false.
+Use_radio = .false.
+Use_chemo = .false.
+
+Dose_radio = 3.1245D5
+Dose_chemo = 1.96D-2
+Gain_radio = 4.D0/3.D0
+
+*--------------------------------
+* Choixpb choix le second membre
+*--------------------------------
+* 0  : la solution est 1
+* 99 pas de terme source physique et u=v=0. sur le bord
+* 66 sol x+y pour le pb degenere avec a(u)=u(1-u)
+* 77 sol x+y pour a(u) = u
+*
+Choixpb      = 0
+
+*------------------------------------
+* Choixgb choix de la solution exacte
+*------------------------------------
+* 1  : gbord  = x+y 
+* 2  : gbord  = x*x - y*y 
+* 3  : gbord  = sin(x)*exp(-y) 
+* 4  : gbord  = sin(pi*x)sin(pi*y)*exp(-2pi^2*t)
+* 5  : gbord  = ( 1.D0 + (cos(pi*x))*exp(-t*pi**2) )/2.D0
+* 77 : gbord  = cste
+* 99 : gbord  = 0
+
+Choixgb      = 77
+
+*--------------------------------------
+* Choixanisu choix d anisotropie pour u
+*--------------------------------------
+* 1 : S =Id
+* 2 : S = k(x,y) *Id 
+*         k(x,y) est choisit dans k scalaire
+* 3 : anisotropie moderee S(x) = [ deltax,  deltaxy;
+*                                  deltaxy, deltay ] 
+* 4 : anisotropie heterogene rotationnelle
+*     S(x) = S depend de delta un parametre 
+
+choixanisu      = 1
+
+*--------------------------------------
+* choixanisc choix d anisotropie pour c
+*--------------------------------------
+* 1 : S =Id
+* 2 : S = k(x,y) *Id 
+*         k(x,y) est choisit dans k scalaire
+* 3 : anisotropie moderee S(x) = [ deltax,  deltaxy;
+*                                  deltaxy, deltay ] 
+* 4 : anisotropie heterogene rotationnelle
+*     S(x) = S depend de delta un parametre 
+
+choixanisc      = 1
+
+*--------------------------------------
+* Choixanise choix d anisotropie pour e
+*--------------------------------------
+* 1 : S =Id
+* 2 : S = k(x,y) *Id 
+*         k(x,y) est choisit dans k scalaire
+* 3 : anisotropie moderee S(x) = [ deltax,  deltaxy;
+*                                  deltaxy, deltay ] 
+* 4 : anisotropie heterogene rotationnelle
+*     S(x) = S depend de delta un parametre 
+
+choixanise      = 1
+
+*--------------------------------------
+* Choixanisv choix d anisotropie pour v
+*--------------------------------------
+* 1 : S =Id
+* 2 : S = k(x,y) *Id 
+*         k(x,y) est choisit dans k scalaire
+* 3 : anisotropie moderee S(x) = [ deltax,  deltaxy;
+*                                  deltaxy, deltay ] 
+* 4 : anisotropie heterogene rotationnelle
+*     S(x) = S depend de delta un parametre 
+
+choixanisv      = 1
+
+*----------------------------------
+* choix de la fonction A degeneree pour U
+*----------------------------------
+*  pour a(u) = c  (choix 1)
+*  pour a(u) = c u(1-u)**2 (choix 2)
+*  pour a(u) = c u(1-u)**4 (choix 3)
+*  pour a(u) = c (1+gamma-1)(u/uc)**gamma ) (choix 4)
+*  pour a(u) = c u(1-u) (choix 5)
+*
+ChoixAdegU = 0
+CoefDiffuAdeg (c) = 1.D0
+*
+*----------------------------------
+* choix de la fonction Chi pour le terme de transport pour U 
+*----------------------------------
+*  pour mu(u) = c (choix 1)
+*  pour mu(u) = c u (choix 2)
+*  pour mu(u) = c u(1-u) (choix 3)
+*  pour mu(u) = c u(1-u)^2 (choix 4)
+* (choix 5) c est le choix des flux numériques avec  
+* chicroit et chiDécroit
+*  pour mu(u) = c [u(1-u)]^2 (choix 6) et pour mu
+*
+ChoixMuU = 1
+CoefTranspMuU (c) = 0.D0 
+
+*----------------------------------
+* choix de la fonction A degeneree pour E
+*----------------------------------
+*  pour a(e) = c  (choix 1)
+*  pour a(e) = c e(1-e)**2 (choix 2)
+*  pour a(e) = c e(1-e)**4 (choix 3)
+*  pour a(e) = c (1+gamma-1)(e/uc)**gamma ) (choix 4)
+*  pour a(e) = c e(1-e) (choix 5)
+ChoixAdegE = 0
+CoefDiffeAdeg (c) = 0.D0
+*
+*----------------------------------
+* choix de la fonction Chi pour le terme de transport pour E
+*----------------------------------
+*  pour mu(e) = c (choix 1)
+*  pour mu(e) = c e (choix 2)
+*  pour mu(e) = c e(1-e) (choix 3)
+*  pour mu(e) = c e(1-e)^2 (choix 4)
+* (choix 5) c est le choix des flux numériques avec  
+* chicroit et chiDécroit
+*  pour mu(e) = c [e(1-e)]^2 (choix 6) et pour mu
+*
+ChoixMuE = 1
+CoefTranspMuE (c) = 0.D0
+
+
+u_bar  = 1.D0
+gamma  = 2
+*
+iprint   = 7
+
+Nom fichier de sortie =  USAVE
+
+Nom fichier pour plot 1D = UPOINTS
+
+*----------------------------------
+* stockage de la solution en temps
+*----------------------------------
+
+Nombre d iterations pour le stockage (Nb_iter_visit) = 25
+
+Nombre des temps d arret afin de visualiser (ntarr) = 6
+
+Les temps d arret (Tempstock) = 1. 2.   4. 5.  10. 20. 
+
+
+*------------------------------------------------
+*  --------------  CONDITIONS INITIALES  --------
+*------------------------------------------------
+
+* Type condition initiale (Typecondinitiale ) 
+* Typecondinitiale 0 solution constante par morceaux
+* Typecondinitiale 1 solution pour le cerveau
+* Typecondinitiale 2 solution constante égale à 1 
+
+ 
+* cette partie n'est pas lue mais doit être compatible si typrci vaut 1 
+* CI Pour U
+
+TypecondinitialeU = 2
+
+* Nombre de region solution constante (Ndivu)   = 1
+* region 1, Position en xmin,xmax,ymin ymax, v  = 0.45 0.55 0.45 0.55    1. 
+* region 2, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.2 0.3    5. 
+* region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
+* region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
+*--------------------------------------------------
+
+
+TypecondinitialeC = 2
+
+* Nombre de region solution constante (Ndivv)   = 4
+* region 1, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.7 0.8    5. 
+* region 2, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.2 0.3    5. 
+* region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
+* region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
+
+TypecondinitialeE = 2
+
+TypecondinitialeV = 2
+*--------------------------------------------------
+* Points de sauvegarde des points en cours du temps 
+*---------------------------------------------------
+Nb_points = 5
+
+* positions des points
+point 1(x,y) = 0.5D0   0.50
+point 2(x,y) = 0.25D0  0.750
+point 3(x,y) = 0.25D0  0.25D0
+point 4(x,y) = 0.75D0  0.75D0
+point 5(x,y) = 0.75D0  0.25D0
+  
+*------------------------------------------------
+*  --------------  CONDITIONS LIMITES  --------
+* 1 dirichlet, 2 Neumann
+*-----------------------------------------------
+Condition limite gauche  (CLgauche) = 2
+Condition limite droite  (CLdroite) = 2
+Condition limite bas     (CLbas)    = 2
+Condition limite haut    (CLhaut)   = 2
+

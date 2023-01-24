@@ -43,8 +43,10 @@ SUBROUTINE UBORD(chxgb,temps)
      Select case ( NtypS(is) )
      case (dirichlet)
         Gb(is) = gbord(temps, coordS(1,is), coordS(2,is),chxgb )
-     case(0,neumann)
+     case(0)
         !! On fait rien
+     case(neumann)
+        !! on fait rien
      case default
         print*,'probleme TypSeg'
         stop
@@ -55,8 +57,10 @@ SUBROUTINE UBORD(chxgb,temps)
      Select case ( NtypSeg(iseg) )
      case (dirichlet)
         Gb(iseg+Nbs) = gbord(temps, CoordMseg(1,iseg), CoordMseg(2,iseg),chxgb )
-     case(0,neumann)
-        !! On fait rien
+      case(0)
+         !! On fait rien
+      case(neumann)
+         !! on fait rien
      case default
         print*,'probleme TypSeg'
         stop

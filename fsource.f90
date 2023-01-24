@@ -309,6 +309,8 @@ Contains
     case(66)! cas degenere avec a(u) =u(1-u)
        gbord = epsilon
     case(77)! cas degenere avec a(u) =u
+       gbord = -20.D0
+    case(80)! cas spécifique du Laplacien avec Neumann
        gbord = 1.D0
     case(99)
        gbord = 0.D0

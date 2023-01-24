@@ -3,9 +3,9 @@
 !                ******************************
 ! *****************************************************************************
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
-!     *-!!!!!!!!!!!!!@!!@!!!@!!!!!!@!!@!!!@!!!!!!!!!!!-*
-!     *-!!!!!!!!!@@@@@!!@!!!@!!@@@@@!!@!!!@!!!!!!!!!!!-*
-!     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!@!!!@!!!!!!!!!!!-*
+!     *-!!!!!!!!!!!!!@!!@!!!@!!!!!!@!!!!!!@!!!!!!!!!!!-*
+!     *-!!!!!!!!!@@@@@!!@!!!@!!@@@@@!!@@@@@!!!!!!!!!!!-*
+!     *-!!!!!!!!!@!!!!!!@!!!@!!@@!!!!!!!!!@!!!!!!!!!!!-*
 !     *-!!!!!!!!!@@@@@!!@@@@@!!@@@@@!!@@@@@!!!!!!!!!!!-*
 !------------------------------------------------------------
 !  Dans ce sous-programme on discretise l'equation en U par un scheme  implicite 
@@ -712,12 +712,13 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
      Yk = bigradient(A,-F, X0,Tolerencegradient)
      CALL prvari(uprint,'Matrice A = ',Ndim )
      !write(*,*)'Yk=',Yk
-     !write(*,*)'F(1)=',F(1)
+     !write(*,*)'F =',F
      print*,'kiter = ', kiter,'erreur NEWTON sqrt(sum(Yk*Yk))',sqrt(sum(Yk*Yk))
-     If (sqrt(dot_product(Yk,Yk)) <TolerenceNewton) exit
-     Xk=Xk+Yk
      !print*,'max Xk', maxval(Xk), 'min Xk', minval(Xk)
      !print*,'max F', maxval(F), 'min F', minval(F)
+     If (sqrt(dot_product(Yk,Yk)) <TolerenceNewton) exit
+     Xk=Xk+Yk
+     
      !stop
      !! impression de A etde F
      !     DO i = 1, size(A%IndPL)-1
@@ -725,7 +726,7 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
      !    END DO
   END Do
   U=Xk+Yk
-  print*,'fin newton'
+  !print*,'fin newton'
   !------------
   ! Impressions
   !------------

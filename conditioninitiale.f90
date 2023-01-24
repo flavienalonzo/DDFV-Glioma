@@ -61,26 +61,26 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
   Select case ( TypecondinitialeU )
      !
   case(0) 
-   !  buffer=lireligne(uread)
-   !  READ(buffer, *, err = 10) Ndivu
-   !  CALL prvari (uprint, 'NdivU                : ', Ndivu)
-   !  print*,'size(UU) cdt initiale =',size(UU)
-   !  !!
-   !  DO ii = 1, Ndivu 
-   !     buffer = lireligne(uread)
-   !     READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, uinit
-   !     print*, xmin, xmax, ymin, ymax, uinit
-   !     DO is = 1, NsInt
-   !        if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
-   !              & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
-   !             & UU(is)= uinit
-   !     END DO
-   !     DO jt = 1, Nbt
-   !        if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
-   !             & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
-   !             & UU(jt + NsInt)= uinit
-   !     END DO
-   !  END DO
+     buffer=lireligne(uread)
+     READ(buffer, *, err = 10) Ndivu
+     CALL prvari (uprint, 'NdivU                : ', Ndivu)
+     print*,'size(UU) cdt initiale =',size(UU)
+     !!
+     DO ii = 1, Ndivu 
+        buffer = lireligne(uread)
+        READ(buffer, *, err = 10) xmin, xmax, ymin, ymax, uinit
+        print*, xmin, xmax, ymin, ymax, uinit
+        DO is = 1, NsInt
+           if (CoordS(1,is)> xmin .and. CoordS(1,is) < xmax &
+                 & .and. CoordS(2,is) > ymin .and. CoordS(2,is) < ymax) &
+                & UU(is)= uinit
+        END DO
+        DO jt = 1, Nbt
+           if (CoordK(1,jt) > xmin .and. CoordK(1,jt) < xmax &
+                & .and. CoordK(2,jt) > ymin .and. CoordK(2,jt) < ymax) &
+                & UU(jt + NsInt)= uinit
+        END DO
+     END DO
 
    case(1)
       NbTpS = 0
@@ -103,6 +103,14 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
       END DO
       DO is = 1, NsInt
          UU(is) = UU(is)/NbTpS(is)
+      END DO
+
+   case(2) 
+      DO is = 1, NsInt
+         UU(is) = 20.D0*exp(-20*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+      END DO
+      DO jt = 1,Nbt
+         UU(jt + NsInt) = 20.D0*exp(-20*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
       END DO
 
   end Select
@@ -158,6 +166,9 @@ case(1)
    DO is = 1, NsInt
       CC(is) = CC(is)/NbTpS(is)
    END DO
+
+case(2) 
+   CC = 1.D0
 end select
 
   !!----------------------------------------
@@ -212,6 +223,9 @@ case(0)
       EE(is) = EE(is)/NbTpS(is)
    END DO
 
+case(2) 
+   EE = 1.D0
+
 end Select
 
 
@@ -252,6 +266,9 @@ end Select
      DO jt = 1, Nbt
         VV(jt + NsInt) = 1.D-8
      END DO
+
+   case(2) 
+      VV = 1.D0
 
    end select
   !=====================

@@ -57,10 +57,13 @@ PROGRAM GLIOMADDFV
   pi = 4.D0*atan(1.)
   !!
   CALL init                    !* Initialisation
+  print*, 'init_fini'
 
   CALL maillage                !* lecture du maillage
+  print*, 'maillage_fini'
 
   CALL meshtools               !* Mise � jour du maillage
+  print*, 'meshtools_fini'
   !------------------------------------
   ! Nombre d'inconnues dans le probleme
   !------------------------------------
@@ -75,12 +78,11 @@ PROGRAM GLIOMADDFV
   !---------------------------------------------
   affichage = 0
   CALL Conditioninitiale(C,E,U,V,NbInc)
-  write(*,*)'cdt initiale ok'
+ 
   !---------------------------------------
   ! Allocation de la structure des donn�es
   !---------------------------------------
   IF (Choixdt == 0) dt = 0.1*(maxval(Msig))**2
-  print*,'dt    =',dt
   CALL matrixinitDDFV(AC)
   CALL matrixinitDDFV(AE)
   CALL matrixinitDDFV(AU)
@@ -95,6 +97,7 @@ PROGRAM GLIOMADDFV
   ! Coefficients de transmissibilites pour u, c, e et v
   !-----------------------------------------
   CALL transmis(Choixanisu,Choixanisc,Choixanise,Choixanisv)
+
  
   !! -------------
   !! Temps initial 
@@ -155,27 +158,38 @@ PROGRAM GLIOMADDFV
      !----------------------------------------------
      CALL ubord(Choixgb,Tempsactuel)
 
-
      ! Algorithme iteratif en m
      Um = Uold; Vm = Vold; Cm = Cold; Em = Eold
-     cvge = .false.; m = 0; mitermax = 1
-     Do while ((cvge .neqv. .false.) .AND. (m < mitermax))
+     cvge = .false.; m = 0; mitermax = 1000
+     Do while ((cvge .neqv. .true.) .AND. (m < mitermax))
         !--------------------------------------------------
         ! Resolution du systeme nonlineaire pour calculer U
         !--------------------------------------------------
         ! Methode de Newton
         CALL NewtoncDDFV(AC,Cold,C,Em,Um,NbInc,choixpb,Tempsactuel)
-        CALL NewtonuDDFV(AU,Uold,U,C,Em,NbInc,choixpb,Tempsactuel)
-        CALL NewtonvDDFV(AV,Vold,V,C,Em,U,NbInc,choixpb,Tempsactuel)
-        CALL NewtoneDDFV(AE,Eold,E,U,V,NbInc,choixpb,Tempsactuel)
+        CALL NewtonuDDFV(AU,Uold,U,Cm,Em,NbInc,choixpb,Tempsactuel)
+        CALL NewtonvDDFV(AV,Vold,V,Cm,Em,Um,NbInc,choixpb,Tempsactuel)
+        CALL NewtoneDDFV(AE,Eold,E,Um,Vm,NbInc,choixpb,Tempsactuel)
         
         ! Calcul de l'erreur entre deux iterees,
         erreur_iteratif = sqrt(dot_product(Cm-C,Cm-C)) + sqrt(dot_product(Em-E,Em-E))&
              & + sqrt(dot_product(Um-U,Um-U))+sqrt(dot_product(Vm-V,Vm-V))
+         print*, 'erreur relative = ',erreur_iteratif
         If (erreur_iteratif < Tolerenceiterative) cvge = .true.
         Um = U; Vm = V; Cm = C; Em = E
         m = m+1
      end Do
+
+     print*,' Boucle en TEMPS iter = ', niter     
+     print*,' Max solution calculee U   : ', MAXVAL(U)
+     print*,' Min solution calculee U   : ', MINVAL(U)
+     print*,' Max solution calculee V   : ', MAXVAL(V)
+     print*,' Min solution calculee V   : ', MINVAL(V)
+     print*,' Max solution calculee C   : ', MAXVAL(C)
+     print*,' Min solution calculee C   : ', MINVAL(C)
+     print*,' Max solution calculee E   : ', MAXVAL(E)
+     print*,' Min solution calculee E   : ', MINVAL(E)
+
      !------------------------------------------
      ! Erreur L^infinie entre U approchee et Uex
      !------------------------------------------
@@ -224,13 +238,15 @@ PROGRAM GLIOMADDFV
   !!
   CALL prvari (uprint, 'affichage       : ', niter+affichage-1)
   !!
-  DO i = 1, nbitertemps 
-     WRITE(NormU,211) (i-1)*dt, NormL1U(i)
-     WRITE(NormC,211) (i-1)*dt, NormL1C(i)
-     WRITE(NormE,211) (i-1)*dt, NormL1E(i)
-     WRITE(NormV,211) (i-1)*dt, NormL1V(i)
-  END DO
+  !DO i = 1, nbitertemps 
+  !   WRITE(NormU,211) (i-1)*dt, NormL1U(i)
+  !   WRITE(NormC,211) (i-1)*dt, NormL1C(i)
+  !   WRITE(NormE,211) (i-1)*dt, NormL1E(i)
+  !   WRITE(NormV,211) (i-1)*dt, NormL1V(i)
+  !END DO
 
+  !print*, AU%IndPL
+  !print*, AU%Tmat
 !!$  !------------------------------------------
 !!$  ! Erreur L^infinie entre U approch�e et Uex
 !!$  !-------------------------------------------

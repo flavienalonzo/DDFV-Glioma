@@ -162,7 +162,7 @@ CONTAINS
 !!$       write(6,*)'bta=',bta
 !!$       write(6,*)'seuil=',seuil , 'tolerence = ', tolerence   
     END DO
-    write(6,*)'nbigr =', nbigr, 'seuil bigrad=',seuil
+    !write(6,*)'nbigr =', nbigr, 'seuil bigrad=',seuil
     !------------
     ! Impressions
     !------------
