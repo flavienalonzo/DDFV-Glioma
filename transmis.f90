@@ -75,8 +75,8 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           !-----------
           ! S = Id
           !----------
-          uSxxK(iseg)= 1.D0
-          uSyyK(iseg) = 1.D0
+          uSxxK(iseg)= CoefDiffU*1.D0
+          uSyyK(iseg) = CoefDiffU*1.D0
           uSxyK(iseg)= 0.D0
 
        case(2)
@@ -144,8 +144,8 @@ SUBROUTINE transmis(choixaniu,choixanic,choixanie,choixaniv)
           !-----------
           ! S = Id
           !----------
-          eSxxK(iseg)= 1.D0
-          eSyyK(iseg) = 1.D0
+          eSxxK(iseg)= CoefDiffE*1.D0
+          eSyyK(iseg) = CoefDiffE*1.D0
           eSxyK(iseg)= 0.D0
      case(2)
           !-----------

@@ -107,10 +107,10 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
 
    case(2) 
       DO is = 1, NsInt
-         UU(is) = 20.D0*exp(-20*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+         UU(is) = 1.D0*exp(-2*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
       END DO
       DO jt = 1,Nbt
-         UU(jt + NsInt) = 20.D0*exp(-20*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+         UU(jt + NsInt) = 1.D0*exp(-2*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
       END DO
 
   end Select
@@ -168,7 +168,12 @@ case(1)
    END DO
 
 case(2) 
-   CC = 1.D0
+   DO is = 1, NsInt
+      CC(is) = 1.D0 + 0.5*sin(2*pi*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+   END DO
+   DO jt = 1,Nbt
+      CC(jt + NsInt) = 1.D0 + 0.5*sin(2*pi*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+   END DO
 end select
 
   !!----------------------------------------
@@ -224,7 +229,12 @@ case(0)
    END DO
 
 case(2) 
-   EE = 1.D0
+   DO is = 1, NsInt
+      EE(is) = 5.D-1 + 0.25*sin(pi*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+   END DO
+   DO jt = 1,Nbt
+      EE(jt + NsInt) = 5.D-1 + 0.25*sin(pi*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+   END DO
 
 end Select
 
@@ -268,7 +278,7 @@ end Select
      END DO
 
    case(2) 
-      VV = 1.D0
+      VV = 1.D-1*UU
 
    end select
   !=====================

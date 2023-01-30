@@ -212,10 +212,14 @@ PROGRAM GLIOMADDFV
         case (3)
            write(chaine,'(i5.5)')niter+affichage
            CALL plot_vtk (U,'U'//trim(chaine),'U')
+           CALL plot_vtk (C,'C'//trim(chaine),'C')
+           CALL plot_vtk (E,'E'//trim(chaine),'E')
            CALL plot_vtk (V,'V'//trim(chaine),'V')
         case default
            write(chaine,'(i5.5)')niter
            CALL plot_vtk (U,'U'//trim(chaine),'U')
+           CALL plot_vtk (C,'C'//trim(chaine),'C')
+           CALL plot_vtk (E,'E'//trim(chaine),'E')
            CALL plot_vtk (V,'V'//trim(chaine),'V')
         END Select
      END IF
@@ -225,6 +229,8 @@ PROGRAM GLIOMADDFV
   END DO
   !!
   CALL plot_vtk (U,'Ufinal','U')
+  CALL plot_vtk (C,'Cfinal','C')
+  CALL plot_vtk (E,'Efinal','E')
   CALL plot_vtk (V,'Vfinal','V')
   !!
   close (cdtinitialeU)

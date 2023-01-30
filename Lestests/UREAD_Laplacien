@@ -39,7 +39,7 @@ ChoixBord          = 1
 ChoixCdtBord       = 2
 *------------------------------------------------------
 
-Nombre iteration en temps (nbitertemps) = 300
+Nombre iteration en temps (nbitertemps) = 3000
 
 *------------------------------------------------------
 CFDT               = 1.D0
@@ -72,15 +72,15 @@ fichiers des segments        = carre.1.edge
 
 *---option 2 ----- Si maillage de Boyer (Benchmark) (0,1)x(0,1)---------
 
-fichier coordonnees sommets  = mesh_tri_1.typ1
+fichier coordonnees sommets  = mesh_tri_2.typ1
 
 *-------------------------
 *   Coefficients de diffusion
 *------------------------        
 CoefDiffU   = 1.D-3
-CoefDiffC   = 0.D0
-CoefDiffE   = 0.D-2 
-CoefDiffV   = 0.D-1 
+CoefDiffC   = 1.D-5
+CoefDiffE   = 1.D-3 
+CoefDiffV   = 1.D-5 
 CoefDiffWm  = 1.D0
 CoefDiffGm  = 1.D0
 CoefDiffPs  = 1.D0
@@ -88,8 +88,8 @@ CoefDiffPs  = 1.D0
 *-------------------------
 *   Coefficients de réaction
 *------------------------    
-rho1        = 0.D0
-beta1       = 0.D0
+rho1        = 1.D-1
+beta1       = 1.D-2
 alpha2      = 0.D0
 beta2       = 0.D0
 gamma2      = 0.D0
@@ -99,8 +99,8 @@ alpha4      = 0.D0
 beta4       = 0.D0
 gamma4      = 0.D0
 
-Chypo       = 75D0
-Cnecro      = 50D0
+Chypo       = 75.D0
+Cnecro      = 0.D0
 
 *-------------------------
 *   Traitements
@@ -160,7 +160,7 @@ choixanisu      = 1
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanisc      = 1
+choixanisc      = 2
 
 *--------------------------------------
 * Choixanise choix d anisotropie pour e
@@ -186,18 +186,19 @@ choixanise      = 1
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanisv      = 1
+choixanisv      = 2
 
 *----------------------------------
 * choix de la fonction A degeneree pour U
 *----------------------------------
-*  pour a(u) = c  (choix 1)
+*  pour a(u) = c  (choix 0)
+*  pour a(u) = c u(1-u)  (choix 1)
 *  pour a(u) = c u(1-u)**2 (choix 2)
 *  pour a(u) = c u(1-u)**4 (choix 3)
 *  pour a(u) = c (1+gamma-1)(u/uc)**gamma ) (choix 4)
 *  pour a(u) = c u(1-u) (choix 5)
 *
-ChoixAdegU = 0
+ChoixAdegU = 1
 CoefDiffuAdeg (c) = 1.D0
 *
 *----------------------------------
@@ -211,19 +212,20 @@ CoefDiffuAdeg (c) = 1.D0
 * chicroit et chiDécroit
 *  pour mu(u) = c [u(1-u)]^2 (choix 6) et pour mu
 *
-ChoixMuU = 1
-CoefTranspMuU (c) = 0.D0 
+ChoixMuU = 3
+CoefTranspMuU (c) = 1.D3
 
 *----------------------------------
 * choix de la fonction A degeneree pour E
 *----------------------------------
-*  pour a(e) = c  (choix 1)
+*  pour a(e) = c  (choix 0)
+*  pour a(e) = c e(1-e) (choix 1)
 *  pour a(e) = c e(1-e)**2 (choix 2)
 *  pour a(e) = c e(1-e)**4 (choix 3)
 *  pour a(e) = c (1+gamma-1)(e/uc)**gamma ) (choix 4)
 *  pour a(e) = c e(1-e) (choix 5)
-ChoixAdegE = 0
-CoefDiffeAdeg (c) = 0.D0
+ChoixAdegE = 1
+CoefDiffeAdeg (c) = 1.D0
 *
 *----------------------------------
 * choix de la fonction Chi pour le terme de transport pour E
@@ -236,8 +238,8 @@ CoefDiffeAdeg (c) = 0.D0
 * chicroit et chiDécroit
 *  pour mu(e) = c [e(1-e)]^2 (choix 6) et pour mu
 *
-ChoixMuE = 1
-CoefTranspMuE (c) = 0.D0
+ChoixMuE = 3
+CoefTranspMuE (c) = 1.D3
 
 
 u_bar  = 1.D0
