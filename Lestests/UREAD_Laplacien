@@ -88,18 +88,18 @@ CoefDiffPs  = 1.D0
 *-------------------------
 *   Coefficients de réaction
 *------------------------    
-rho1        = 1.D-1
-beta1       = 1.D-2
-alpha2      = 0.D0
-beta2       = 0.D0
-gamma2      = 0.D0
-rho3        = 0.D0
-beta3       = 0.D0
-alpha4      = 0.D0
-beta4       = 0.D0
-gamma4      = 0.D0
+rho1        = 2.7D-1
+beta1       = 1.7D-1
+alpha2      = 1.D-2
+beta2       = 5.D-3
+gamma2      = 1.D-1
+rho3        = 4.9D-3
+beta3       = 3.1D-3
+alpha4      = 1.D-2
+beta4       = 5.D-3
+gamma4      = 1.D-2
 
-Chypo       = 75.D0
+Chypo       = 1.3D0
 Cnecro      = 0.D0
 
 *-------------------------

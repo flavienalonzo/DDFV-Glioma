@@ -206,7 +206,7 @@ Contains
       implicit none
       REAL(kind=long), INTENT(in)     :: c
       REAL(kind=long)  :: gv
-      if (c>=Cnecro .and. c<=Chypo) then 
+      if ((c>=Cnecro).and. (c<=Chypo)) then !
          gv = c 
       else 
          gv = 0.D0

@@ -107,10 +107,10 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
 
    case(2) 
       DO is = 1, NsInt
-         UU(is) = 1.D0*exp(-2*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+         UU(is) = 1.D-1*exp(-2*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
       END DO
       DO jt = 1,Nbt
-         UU(jt + NsInt) = 1.D0*exp(-2*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+         UU(jt + NsInt) = 1.D-1*exp(-2*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
       END DO
 
   end Select
