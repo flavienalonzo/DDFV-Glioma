@@ -107,10 +107,23 @@ SUBROUTINE  conditioninitiale(CC,EE,UU,VV,Ndim)
 
    case(2) 
       DO is = 1, NsInt
-         UU(is) = 1.D-1*exp(-2*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+         if (norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/))**2<=0.01) then 
+            UU(is) = 1.D-1
+         elseif (norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/))**2<=0.02) then 
+            UU(is) = 4.D-1
+         else 
+            UU(is) = 1.D-1*exp(-2*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+         end if
+         
       END DO
       DO jt = 1,Nbt
-         UU(jt + NsInt) = 1.D-1*exp(-2*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+         if (norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/))**2<=0.01) then 
+            UU(jt + NsInt) = 1.D-1
+         elseif (norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/))**2<=0.02) then 
+            UU(jt + NsInt) = 4.D-1
+         else 
+            UU(jt + NsInt) = 1.D-1*exp(-2*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+         end if
       END DO
 
   end Select
@@ -169,10 +182,19 @@ case(1)
 
 case(2) 
    DO is = 1, NsInt
-      CC(is) = 1.D0 + 0.5*sin(2*pi*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+      if (norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/))**2<=0.02) then 
+         CC(is) = 7.D-2
+      else 
+         CC(is) = 148.D0
+      end if
+      !CC(is) = 1.D0 + 0.5*sin(2*pi*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
    END DO
    DO jt = 1,Nbt
-      CC(jt + NsInt) = 1.D0 + 0.5*sin(2*pi*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+      if (norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/))**2<=0.02) then 
+         CC(jt + NsInt) = 7.D-2
+      else 
+         CC(jt + NsInt) = 148.D0
+      end if
    END DO
 end select
 
@@ -230,10 +252,20 @@ case(0)
 
 case(2) 
    DO is = 1, NsInt
-      EE(is) = 5.D-1 + 0.25*sin(pi*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
+      if (norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/))**2<=0.05) then 
+         EE(is) = 1.D-1
+      else 
+         EE(is) = 8.D-1
+      end if
+      !EE(is) = 5.D-1 + 0.25*sin(pi*norm2((/CoordS(1,is),CoordS(2,is)/)-(/0.58,0.3/)))
    END DO
    DO jt = 1,Nbt
-      EE(jt + NsInt) = 5.D-1 + 0.25*sin(pi*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
+      if (norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/))**2<=0.05) then 
+         EE(jt + NsInt) = 1.D-1
+      else 
+         EE(jt + NsInt) = 8.D-1
+      end if
+      !EE(jt + NsInt) = 5.D-1 + 0.25*sin(pi*norm2((/CoordK(1,jt),CoordK(2,jt)/)-(/0.58,0.3/)))
    END DO
 
 end Select
@@ -278,7 +310,7 @@ end Select
      END DO
 
    case(2) 
-      VV = 1.D-1*UU
+      VV = 1.D-8
 
    end select
   !=====================

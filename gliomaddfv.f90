@@ -166,10 +166,11 @@ PROGRAM GLIOMADDFV
         ! Resolution du systeme nonlineaire pour calculer U
         !--------------------------------------------------
         ! Methode de Newton
-        CALL NewtoncDDFV(AC,Cold,C,Em,Um,NbInc,choixpb,Tempsactuel)
-        CALL NewtonuDDFV(AU,Uold,U,Cm,Em,NbInc,choixpb,Tempsactuel)
-        CALL NewtonvDDFV(AV,Vold,V,Cm,Em,Um,NbInc,choixpb,Tempsactuel)
-        CALL NewtoneDDFV(AE,Eold,E,Um,Vm,NbInc,choixpb,Tempsactuel)
+         CALL NewtonuDDFV(AU,Uold,U,Cm,Em,NbInc,choixpb,Tempsactuel)
+         CALL NewtoncDDFV(AC,Cold,C,Em,Um,NbInc,choixpb,Tempsactuel)
+         CALL NewtoneDDFV(AE,Eold,E,Um,Vm,NbInc,choixpb,Tempsactuel)
+         CALL NewtonvDDFV(AV,Vold,V,Cm,Em,Um,NbInc,choixpb,Tempsactuel)
+
         
         ! Calcul de l'erreur entre deux iterees,
         erreur_iteratif = sqrt(dot_product(Cm-C,Cm-C)) + sqrt(dot_product(Em-E,Em-E))&

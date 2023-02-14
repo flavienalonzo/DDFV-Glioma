@@ -62,17 +62,17 @@ dossiermaillage = ./MESH/
 ** 1 pour  maillage du logiciel triangle
 ** 2 pour  maillage donne (Boyer)
 
-Maillage_Format   =  1
+Maillage_Format   =  2 !1
 *---------------------------------------------------------------------
 *---option 1 ----- Si maillage du logiciel triangle (0,1)x(0,1)-------
 *---------------------------------------------------------------------
-fichier coordonnees sommets  = Brain_mesh.2.ele    
-fichier centre des triangles = Brain_mesh.2.node
-fichiers des segments        = Brain_mesh.2.edge
+fichier coordonnees sommets  = carre.1.ele !Brain_mesh.2.ele    
+fichier centre des triangles = carre.1.node !Brain_mesh.2.node
+fichiers des segments        = carre.1.edge !Brain_mesh.2.edge
 
 *---option 2 ----- Si maillage de Boyer (Benchmark) (0,1)x(0,1)---------
 
-fichier coordonnees sommets  = mesh_VF_5.typ1
+fichier coordonnees sommets  = mesh_tri_2.typ1
 
 *-------------------------
 *   Coefficients de diffusion
@@ -105,9 +105,9 @@ Cnecro      = 50D0
 *-------------------------
 *   Traitements
 *------------------------  
-Use_surgery = .true.
-Use_radio = .true.
-Use_chemo = .true.
+Use_surgery = .false.
+Use_radio = .false.
+Use_chemo = .false.
 
 Dose_radio = 3.1245D5
 Dose_chemo = 1.96D-2
@@ -121,7 +121,7 @@ Gain_radio = 4.D0/3.D0
 * 66 sol x+y pour le pb degenere avec a(u)=u(1-u)
 * 77 sol x+y pour a(u) = u
 *
-Choixpb      = 1
+Choixpb      = 0 !1
 
 *------------------------------------
 * Choixgb choix de la solution exacte
@@ -134,7 +134,7 @@ Choixpb      = 1
 * 77 : gbord  = 1
 * 99 : gbord  = 0
 
-Choixgb      = 3
+Choixgb      = 77 !3
 
 *--------------------------------------
 * Choixanisu choix d anisotropie pour u
@@ -147,7 +147,7 @@ Choixgb      = 3
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanisu      = 2
+choixanisu      = 1 !2
 
 *--------------------------------------
 * choixanisc choix d anisotropie pour c
@@ -173,7 +173,7 @@ choixanisc      = 2
 * 4 : anisotropie heterogene rotationnelle
 *     S(x) = S depend de delta un parametre 
 
-choixanise      = 2
+choixanise      = 1 !2
 
 *--------------------------------------
 * Choixanisv choix d anisotropie pour v
@@ -197,7 +197,7 @@ choixanisv      = 2
 *  pour a(u) = c (1+gamma-1)(u/uc)**gamma ) (choix 4)
 *  pour a(u) = c u(1-u) (choix 5)
 *
-ChoixAdegU = 2
+ChoixAdegU = 1
 CoefDiffuAdeg (c) = 1.D0
 *
 *----------------------------------
@@ -222,7 +222,7 @@ CoefTranspMuU (c) = 1.D0
 *  pour a(e) = c e(1-e)**4 (choix 3)
 *  pour a(e) = c (1+gamma-1)(e/uc)**gamma ) (choix 4)
 *  pour a(e) = c e(1-e) (choix 5)
-ChoixAdegE = 2
+ChoixAdegE = 1
 CoefDiffeAdeg (c) = 1.D0
 *
 *----------------------------------
@@ -253,7 +253,7 @@ Nom fichier pour plot 1D = UPOINTS
 * stockage de la solution en temps
 *----------------------------------
 
-Nombre d iterations pour le stockage (Nb_iter_visit) = 250
+Nombre d iterations pour le stockage (Nb_iter_visit) = 25
 
 Nombre des temps d arret afin de visualiser (ntarr) = 6
 
@@ -273,7 +273,7 @@ Les temps d arret (Tempstock) = 1. 2.   4. 5.  10. 20.
 * cette partie n'est pas lue mais doit être compatible si typrci vaut 1 
 * CI Pour U
 
-TypecondinitialeU = 1
+TypecondinitialeU = 2 !1
 
 * Nombre de region solution constante (Ndivu)   = 1
 * region 1, Position en xmin,xmax,ymin ymax, v  = 0.45 0.55 0.45 0.55    1. 
@@ -283,7 +283,7 @@ TypecondinitialeU = 1
 *--------------------------------------------------
 
 
-TypecondinitialeC = 1
+TypecondinitialeC = 2 !1
 
 * Nombre de region solution constante (Ndivv)   = 4
 * region 1, Position en xmin,xmax,ymin ymax, v  = 0.2 0.3 0.7 0.8    5. 
@@ -291,9 +291,9 @@ TypecondinitialeC = 1
 * region 3, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.7 0.8    5. 
 * region 4, Position en xmin,xmax,ymin ymax, v  = 0.7 0.8 0.2 0.3    5. 
 
-TypecondinitialeE = 1
+TypecondinitialeE = 2 !1
 
-TypecondinitialeV = 1
+TypecondinitialeV = 2 !1
 *--------------------------------------------------
 * Points de sauvegarde des points en cours du temps 
 *---------------------------------------------------

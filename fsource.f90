@@ -199,6 +199,7 @@ Contains
       else 
          hu = 0.D0
       end if
+      !hu = 0.D0
    end function
 
    function gv(c)
@@ -211,6 +212,7 @@ Contains
       else 
          gv = 0.D0
       end if
+      !gv = 0.D0
    end function
 
   FUNCTION fsourceu(t,x,y,m) ! m represente le choix de probleme

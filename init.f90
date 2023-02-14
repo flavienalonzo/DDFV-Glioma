@@ -46,7 +46,7 @@ SUBROUTINE  INIT
   cdtinitialeV =  23  ! fichier de sauvgarde a un instant donne
 
   print*,'UwU 48'
-  OPEN (uread, file = 'UREAD_Laplacien'  ,  status = 'old') 
+  OPEN (uread, file = 'UREAD_Glioma'  ,  status = 'old') 
   OPEN (uprint, file = 'UPRINT',  status = 'unknown')
   OPEN (NormU, file = 'NormU'  ,  status = 'unknown')
   OPEN (NormV, file = 'NormV'  ,  status = 'unknown')

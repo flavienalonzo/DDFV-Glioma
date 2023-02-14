@@ -56,8 +56,14 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
   ! Corps
   !------
   Xk = Uold
-  print*,'max Xk initial',maxval(Xk)
+  
   DO kiter = 1, kitermax
+     if ((minval(Xk)<0.D0) .or. (maxval(Xk)>1.D0)) then
+          print*,count((Xk<0.D0))
+          print*,'min max Xk initial pour U',minloc(Xk),minval(Xk),maxloc(Xk),maxval(Xk),NsInt
+          !CALL plot_vtk (Xk,'U_pb','U')
+          stop
+     end if
      !
      A%TMAT = 0.D0
      !!=============================
@@ -76,7 +82,7 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
      !
      DO jt = 1, Nbt
         ii = jt + NsInt
-        F(ii) = CFDT*AireK(jt)*(( Xk(ii)-Uold(ii) )/dt - rho1*hu(Cm(ii)) + beta1*Xk(ii) + Tu(temps,Xk(ii))) 
+        F(ii) = CFDT*AireK(jt)*(( Xk(ii)-Uold(ii) )/dt - rho1*hu(Cm(ii))*fu(Xk(ii),Em(ii)) + beta1*Xk(ii) + Tu(temps,Xk(ii))) 
         !! derivee de F par rapport a Xk(ii)
         call ajout(ii,ii, AireK(jt)*(CFDT/dt - rho1*hu(Cm(ii))*deriveefu(Xk(ii),Em(ii)) + beta1 + deriveeTu(temps,Xk(ii))), A )
      END DO
@@ -713,7 +719,7 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
      CALL prvari(uprint,'Matrice A = ',Ndim )
      !write(*,*)'Yk=',Yk
      !write(*,*)'F =',F
-     print*,'kiter = ', kiter,'erreur NEWTON sqrt(sum(Yk*Yk))',sqrt(sum(Yk*Yk))
+     print*,'kiter = ', kiter,'erreur NEWTON sqrt(sum(Yk*Yk)) pour U',sqrt(sum(Yk*Yk))
      !print*,'max Xk', maxval(Xk), 'min Xk', minval(Xk)
      !print*,'max F', maxval(F), 'min F', minval(F)
      If (sqrt(dot_product(Yk,Yk)) <TolerenceNewton) exit
@@ -726,7 +732,7 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
      !    END DO
   END Do
   U=Xk+Yk
-  !print*,'fin newton'
+  print*,'fin newtonu'
   !------------
   ! Impressions
   !------------

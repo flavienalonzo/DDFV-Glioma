@@ -56,10 +56,13 @@ SUBROUTINE NewtonvDDFV(A,Vold,V,Cm,Em,Um,ndim,choixf,temps)
   ! Corps
   !------
   Xk = Vold
-  print*,'max Xk initial',maxval(Xk)
   DO kiter = 1, kitermax
      !
-     A%TMAT = 0.D0
+   if ((minval(Xk)<0.D0) .or. (maxval(Xk)>1.D4)) then
+      print*,'min max Xk initial pour E',minval(Xk),maxval(Xk)
+      stop 
+   end if
+   A%TMAT = 0.D0
      !!=============================
      !! calcul de F(Xk) et F'(Xk)=AU
      !!=============================
@@ -386,7 +389,7 @@ SUBROUTINE NewtonvDDFV(A,Vold,V,Cm,Em,Um,ndim,choixf,temps)
      CALL prvari(uprint,'Matrice A = ',Ndim )
      !write(*,*)'Yk=',Yk
      !write(*,*)'F(1)=',F(1)
-     print*,'kiter = ', kiter,'erreur NEWTONV sqrt(sum(Yk*Yk))',sqrt(sum(Yk*Yk))
+     print*,'kiter = ', kiter,'erreur NEWTONV sqrt(sum(Yk*Yk)) pour V',sqrt(sum(Yk*Yk))
      If (sqrt(dot_product(Yk,Yk)) <TolerenceNewton) exit
      Xk=Xk+Yk
      !print*,'max Xk', maxval(Xk), 'min Xk', minval(Xk)
