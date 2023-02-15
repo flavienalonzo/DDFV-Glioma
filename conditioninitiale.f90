@@ -308,7 +308,6 @@ end Select
      DO jt = 1, Nbt
         VV(jt + NsInt) = 1.D-8
      END DO
-
    case(2) 
       VV = 1.D-8
 

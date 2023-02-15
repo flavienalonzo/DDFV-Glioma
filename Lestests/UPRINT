@@ -1,37 +1,37 @@
  INIT     Selec_mesh                      :   0.0000000E+00
  INIT     Choix_dt                        :          1
- INIT     dt                              :   0.2000000E-02
+ INIT     dt                              :   0.2000000E-01
  INIT     ChoixBord                       :          1
  INIT     ChoixCdtBord                 :          2
- INIT     NbiterTemps                     :         10
+ INIT     NbiterTemps                     :       3000
  INIT     CFDT                            :   0.1000000E+01
  INIT     epsilon                         :   0.1000000E-07
  INIT     TolerenceGradient               :   0.1000000E-12
  INIT     TolerenceNewton                 :   0.1000000E-08
- INIT     Tolerenceiterative              :   0.1000000E-01
+ INIT     Tolerenceiterative              :   0.1000000E-04
  INIT     ItermaxNewton                   :       1000
  INIT     Dossier Maillage                : ./MESH/                                                                         
  INIT     Maillage_Format                  :          2
  INIT     Fichier du centres             : ./MESH/mesh_tri_2.typ1                                                          
- INIT     CoefDiffU                       :   0.1000000E+01
- INIT     CoefDiffC                       :   0.8600000E+01
- INIT     CoefDiffE                       :   0.1800000E-01
- INIT     CoefDiffV                       :   0.8600000E+00
- INIT     CoefDiffWm                       :   0.2700000E-03
- INIT     CoefDiffGm                       :   0.1350000E-02
- INIT     CoefDiffPs                       :   0.1350000E-01
+ INIT     CoefDiffU                       :   0.1000000E-02
+ INIT     CoefDiffC                       :   0.1000000E-04
+ INIT     CoefDiffE                       :   0.1000000E-02
+ INIT     CoefDiffV                       :   0.1000000E-04
+ INIT     CoefDiffWm                       :   0.1000000E+01
+ INIT     CoefDiffGm                       :   0.1000000E+01
+ INIT     CoefDiffPs                       :   0.1000000E+01
  INIT     rho1                           :   0.2700000E+00
  INIT     beta1                            :   0.1700000E+00
- INIT     alpha2                           :   0.1000000E+03
- INIT     beta2                            :   0.3750000E-01
- INIT     gamma2                            :   0.6000000E+01
+ INIT     alpha2                           :   0.1000000E-01
+ INIT     beta2                            :   0.5000000E-02
+ INIT     gamma2                            :   0.1000000E+00
  INIT     rho3                           :   0.4900000E-02
  INIT     beta3                            :   0.3100000E-02
- INIT     alpha4                           :   0.3400000E+03
- INIT     beta4                            :   0.1560000E+02
- INIT     gamma4                            :   0.1400000E+01
- INIT     Chypo                            :   0.7500000E+02
- INIT     Cnecro                            :   0.5000000E+02
+ INIT     alpha4                           :   0.1000000E-01
+ INIT     beta4                            :   0.5000000E-02
+ INIT     gamma4                            :   0.1000000E-01
+ INIT     Chypo                            :   0.1300000E+01
+ INIT     Cnecro                            :   0.0000000E+00
  INIT     choixpb                         :          0
  INIT     choixgb                         :         77
  INIT     choixanisu                      :          1
@@ -41,11 +41,11 @@
  INIT     ChoixAdegU                       :          1
  INIT     CoefDiffuAdeg                   :   0.1000000E+01
  INIT     ChoixMuU                         :          3
- INIT     CoefTranspMuU                    :   0.1000000E+01
+ INIT     CoefTranspMuU                    :   0.1000000E+04
  INIT     ChoixAdegE                       :          1
  INIT     CoefDiffeAdeg                   :   0.1000000E+01
  INIT     ChoixMuE                         :          3
- INIT     CoefTranspMuE                    :   0.2250000E+05
+ INIT     CoefTranspMuE                    :   0.1000000E+04
  INIT     u_bar                           :   0.1000000E+01
  INIT     gamma                           :          2
  INIT     IPRINT                          :          7

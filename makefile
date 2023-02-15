@@ -24,11 +24,11 @@ OBJS	      = longr.o\
 		scmem.o\
 		ubord.o\
 		transmis.o\
+		plotvtkmod.o\
 		newtoncDDFV.o\
 		newtoneDDFV.o\
 		newtonuDDFV.o\
 		newtonvDDFV.o\
-		plotvtkmod.o\
 		gliomaddfv.o
 $(PROG): $(OBJS)
 	$(FORTRAN) $(OBJS) -o $(PROG)

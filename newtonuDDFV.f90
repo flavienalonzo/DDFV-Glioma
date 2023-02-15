@@ -23,6 +23,7 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
   USE intmatvec
   USE intgradc
   USE fsource
+  use plotvtkmod
 
   IMPLICIT NONE
 
@@ -61,7 +62,8 @@ SUBROUTINE NewtonuDDFV(A,Uold,U,Cm,Em,ndim,choixf,temps)
      if ((minval(Xk)<0.D0) .or. (maxval(Xk)>1.D0)) then
           print*,count((Xk<0.D0))
           print*,'min max Xk initial pour U',minloc(Xk),minval(Xk),maxloc(Xk),maxval(Xk),NsInt
-          !CALL plot_vtk (Xk,'U_pb','U')
+          call plot_vtk_primal(Xk,'U_pb_primal','U')
+          CALL plot_vtk (Xk,'U_pb','U')
           stop
      end if
      !

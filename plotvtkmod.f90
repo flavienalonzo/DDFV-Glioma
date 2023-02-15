@@ -135,9 +135,77 @@ contains
     print*,"OK"
     print*," "
 
-500 format (E30.20)
+      500 format (E30.20)
 
   end subroutine plot_vtk
+
+
+  Subroutine plot_vtk_primal (vec,chaine,nomchamps)
+
+   Real(kind=long), dimension(:),intent(in)   :: vec
+   Character(len=*),intent(in)                :: chaine,nomchamps
+
+   Integer                    :: kt, Lt, is, js, ks, iseg, countk, i, im, jm, km
+   Real(kind=long), dimension(:), allocatable :: WW
+   Integer, dimension(:,:), allocatable       :: NuSoDiam
+
+   print*,"Creation du fichier d'impression"
+   uplotvtk = 30
+   FPLOTVTK = chaine//'.vtk'
+
+   open (unit=uplotvtk,file=FPLOTVTK,status='replace')
+   write(uplotvtk,'(A)') '# vtk DataFile Version 3.0'
+   write(uplotvtk,'(A)') 'LAPLACIEN  2D'
+   write(uplotvtk,'(A)') 'ASCII'
+   write(uplotvtk,'(A)') 'DATASET UNSTRUCTURED_GRID'
+
+   !---------------------------------!
+   ! maillage primal (triangle) ! 
+   !---------------------------------!
+
+   write(uplotvtk,*) 'POINTS',Nbs,' float'
+
+   ! 1. Construction des sous-mailles :
+   !-------------------------------------------
+
+   ! 1.1. Definir les coordonnes de sommets des sous-mailles: 
+
+   DO is = 1, Nbs
+      write (uplotvtk,*) CoordS(1,is), CoordS(2,is), 0.D0
+   END DO
+
+   ! 1.3. Joindre les sommets de chaque sous-maille:
+   !-------------------------------------------------
+   write(uplotvtk,*) 'CELLS ',Nbt, 4*Nbt
+   DO kt = 1, Nbt        
+      write (uplotvtk,*) 3, NuSoK (1,kt)-1, NuSoK (2,kt)-1 &
+      & , NuSoK (3,kt)-1
+   END DO
+
+   write(uplotvtk,*) 'CELL_TYPES ', Nbt
+
+   DO kt = 1, Nbt
+      write(uplotvtk,*) 5  !7 = polygone
+   END DO
+
+   WRITE(uplotvtk,*) 'CELL_DATA',Nbt 
+   WRITE(uplotvtk,*) 'SCALARS ',nomchamps,' float'
+   WRITE(uplotvtk,*) 'LOOKUP_TABLE default'
+
+   ! 3. Creation des fichiers pour visit:
+   !-------------------------------------
+
+   DO kt = 1, Nbt
+      write (uplotvtk,500)  vec(kt)
+   END DO
+
+   close (uplotvtk)
+   print*,"OK"
+   print*," "
+
+     500 format (E30.20)
+
+ end subroutine plot_vtk_primal
 
 
 end module plotvtkmod
