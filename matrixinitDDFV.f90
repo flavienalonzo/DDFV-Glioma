@@ -76,7 +76,7 @@ SUBROUTINE matrixinitDDFV(Mat)
         NcoefMat = NcoefMat + 2
      END select
   END DO
-  print*,'NcoefMat =', NcoefMat
+  !print*,'NcoefMat =', NcoefMat
   !!
 
   ALLOCATE( Mat%IndPL(1:NbInc+1), Mat%Indc(NcoefMat), Mat%TMat(NcoefMat) )

@@ -66,8 +66,8 @@ SUBROUTINE UBORD(chxgb,temps)
         stop
      End Select
   END DO
-  print*,'max Gb dans ubord = ', maxval(Gb)
-  print*,'min Gb dans ubord = ', minval(Gb)
+  !print*,'max Gb dans ubord = ', maxval(Gb)
+  !print*,'min Gb dans ubord = ', minval(Gb)
 
   !-----------------
   ! Fin du programme

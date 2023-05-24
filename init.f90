@@ -45,7 +45,6 @@ SUBROUTINE  INIT
   cdtinitialeU =  22  ! fichier de sauvgarde a un instant donne
   cdtinitialeV =  23  ! fichier de sauvgarde a un instant donne
 
-  print*,'UwU 48'
   OPEN (uread, file = 'UREAD_Laplacien'  ,  status = 'old') 
   OPEN (uprint, file = 'UPRINT',  status = 'unknown')
   OPEN (NormU, file = 'NormU'  ,  status = 'unknown')
@@ -137,7 +136,6 @@ SUBROUTINE  INIT
   dossiermaillage=trim(adjustl(buffer))
   !print*,'dossiermaillage=',dossiermaillage
   CALL prchar (uprint, 'Dossier Maillage                : '//dossiermaillage)
-  print*, 'UwU 140'
   If (selec_mesh == 0) THEN
      buffer=lireligne(uread)
      READ(buffer, *, err = 10) Maillage_Format
@@ -323,37 +321,37 @@ SUBROUTINE  INIT
   END If
 
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffU
   CALL prvarr (uprint, 'CoefDiffU                       : ', CoefDiffU)
   
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffC
   CALL prvarr (uprint, 'CoefDiffC                       : ', CoefDiffC)
 
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffE
   CALL prvarr (uprint, 'CoefDiffE                       : ', CoefDiffE)
   
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffV
   CALL prvarr (uprint, 'CoefDiffV                       : ', CoefDiffV)
 
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffWm
   CALL prvarr (uprint, 'CoefDiffWm                       : ', CoefDiffWm)
 
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffGm
   CALL prvarr (uprint, 'CoefDiffGm                       : ', CoefDiffGm)
 
   buffer=lireligne(uread)
-  print*, buffer
+  !print*, buffer
   READ(buffer, *, err = 10)  CoefDiffPs
   CALL prvarr (uprint, 'CoefDiffPs                       : ', CoefDiffPs)
 
@@ -414,7 +412,7 @@ SUBROUTINE  INIT
   buffer=lireligne(uread)
   READ(buffer, *, err = 10)  Use_chemo
 
-  print*, Use_surgery,Use_radio,Use_chemo
+  !print*, Use_surgery,Use_radio,Use_chemo
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) Dose_radio
 
@@ -424,7 +422,7 @@ SUBROUTINE  INIT
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) Gain_radio
 
-  print*, Dose_radio,Dose_chemo,Gain_radio
+  !print*, Dose_radio,Dose_chemo,Gain_radio
 
   buffer=lireligne(uread)
   READ(buffer, *, err = 10) choixpb

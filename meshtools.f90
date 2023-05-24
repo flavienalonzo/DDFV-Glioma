@@ -26,7 +26,7 @@ SUBROUTINE  meshtools
   INTEGER, DIMENSION(:), ALLOCATABLE            :: PermutSegment,PermutSommet,ntypsbis,NTypSegbis
 
   real(kind=long), dimension(4) :: x, y
-  real(kind=long) :: x1,y1,z
+  real(kind=long) :: x1,y1,z, norm_stock
   CHARACTER(len=14)      :: chaine
 
   !-------------------
@@ -83,9 +83,9 @@ SUBROUTINE  meshtools
   ! calcul de NsInt le nombre de sommets ou la solution est calculee
   !-----------------------------------------------------------------
   NsInt = Nbs - Nbord
-  write(*,*)'le nombre de sommets interieurs est:', NsInt
-  write(*,*)'le nombre de sommets exterieurs est:', Nbord
-  write(*,*)'le nombre de sommets total est:', Nbs
+  !write(*,*)'le nombre de sommets interieurs est:', NsInt
+  !write(*,*)'le nombre de sommets exterieurs est:', Nbord
+  !write(*,*)'le nombre de sommets total est:', Nbs
 
   CALL prvari(uprint,'nombre des sommets interieurs  (NsInt) ', NsInt )
 
@@ -101,9 +101,9 @@ SUBROUTINE  meshtools
   end do
 
   Nsegbord= Nseg - Nsegint
-  write(*,*)'le nombre de segments interieurs est:', Nsegint
-  write(*,*)'le nombre de segments exterieurs est:', Nsegbord
-  write(*,*)'le nombre de segments total est:', Nseg
+  !write(*,*)'le nombre de segments interieurs est:', Nsegint
+  !write(*,*)'le nombre de segments exterieurs est:', Nsegbord
+  !write(*,*)'le nombre de segments total est:', Nseg
   ! -------------------------------------- 
   ! -- reorientation positive des diamants
   ! --------------------------------------
@@ -121,7 +121,7 @@ SUBROUTINE  meshtools
      END IF
   END Do
   !!---------------------------------------------------
-  !! renumerotation des sommets interieurs de 1 à NsInt
+  !! renumerotation des sommets interieurs de 1 ï¿½ NsInt
   !! --------------------------------------------------
   Allocate(PermutSommet(Nbs))
   Nextint = 1 ; Nextext = 1
@@ -156,7 +156,7 @@ SUBROUTINE  meshtools
   DEALLOCATE(CoordSbis,Ntypsbis)
 
   !! --------------------------------------------------------
-  !! Mise à jour des numeros des sommets des triangles: NuSoK
+  !! Mise ï¿½ jour des numeros des sommets des triangles: NuSoK
   !! --------------------------------------------------------
   Allocate(NuSoKbis(typegeomaille,Nbt))
   NuSoKbis = NuSoK
@@ -170,7 +170,7 @@ SUBROUTINE  meshtools
   Deallocate(NuSoKbis)
 
   !! --------------------------------------------------------
-  !! Mise à jour des numeros des sommets des segments : NuSeg
+  !! Mise ï¿½ jour des numeros des sommets des segments : NuSeg
   !! --------------------------------------------------------
   Allocate(NuSegbis(2,Nseg))
   NuSegbis = NuSeg
@@ -189,11 +189,11 @@ SUBROUTINE  meshtools
   !!=================================================================================
   !!                 NUMEROTATION DES SEGMENTS A L'INTERIEUR
   !!=================================================================================
-  !! A ce stade nous avons renumerote les inconnues à l'interieur 
+  !! A ce stade nous avons renumerote les inconnues ï¿½ l'interieur 
   !! en gardant la nouvelle numerotation
   !! 
   !! Maintenant on va renumeroter les segments 
-  !! a l'interieur et mettre à jour les tableau
+  !! a l'interieur et mettre ï¿½ jour les tableau
   !!
   !! -----------------------------------------------------
   !! renumerotation des segmets interieurs de 1 a  Nsegint
@@ -292,16 +292,16 @@ SUBROUTINE  meshtools
   ! -------------------------------------------------------------------------------------
   !                      Construction de NsigK(Nseg) et NsigeKe(Nseg)                   
   ! -------------------------------------------------------------------------------------
-  ! Pour chaque segment iseg, NsigK(Nseg) designe le normal à l'interface primale sortant
-  !  de K alors que NsigeKe(Nseg) designe le normal à l'interface duale sortant de Ke
+  ! Pour chaque segment iseg, NsigK(Nseg) designe le normal ï¿½ l'interface primale sortant
+  !  de K alors que NsigeKe(Nseg) designe le normal ï¿½ l'interface duale sortant de Ke
   ! -------------------------------------------------------------------------------------
   ALLOCATE(NsigK(2,Nseg),NsigeKe(2,Nseg))
   !
   DO iseg = 1, Nseg
-     is = NuSeg(1,iseg); js = NuSeg(2,iseg)  !! is,js numéro globale
-     !! 1,2 numéro locale
-     iK = NumTVoisSeg(1,iseg); jL = NumTVoisSeg(2,iseg) !! ik,jL numéro globale
-     !! 1,2 numéro locale
+     is = NuSeg(1,iseg); js = NuSeg(2,iseg)  !! is,js numï¿½ro globale
+     !! 1,2 numï¿½ro locale
+     iK = NumTVoisSeg(1,iseg); jL = NumTVoisSeg(2,iseg) !! ik,jL numï¿½ro globale
+     !! 1,2 numï¿½ro locale
      !!
      !
      IF (NTypSeg(iseg) == 0)  THEN
@@ -320,11 +320,14 @@ SUBROUTINE  meshtools
            NsigK(1,iseg) = - NsigK(1,iseg)
            NsigK(2,iseg) = - NsigK(2,iseg)
         END IF
+        norm_stock = sqrt(NsigK(1,iseg)**2+NsigK(2,iseg)**2)
+        NsigK(1,iseg) = NsigK(1,iseg)/norm_stock
+        NsigK(2,iseg) = NsigK(2,iseg)/norm_stock
         !-------------------------------------------------------
         ! calcul du vecteur normal NsigeKe sortant de K* vers L*
         !-------------------------------------------------------
         NsigeKe(1,iseg) = -(y(4)-y(3)) ; NsigeKe(2,iseg) = x(4)-x(3)
-        ! ici on effectue le prouduit scalaire pour vérifier la bonne
+        ! ici on effectue le prouduit scalaire pour vï¿½rifier la bonne
         ! direction de Nsigma*K*
         z = (x(2)-x(1))*NsigeKe(1,iseg) + (y(2)-y(1))*NsigeKe(2,iseg)
         !
@@ -333,6 +336,9 @@ SUBROUTINE  meshtools
            NsigeKe(1,iseg) = - NsigeKe(1,iseg) 
            NsigeKe(2,iseg) = - NsigeKe(2,iseg)
         END IF
+        norm_stock = sqrt(NsigeKe(1,iseg)**2+NsigeKe(2,iseg)**2)
+        NsigeKe(1,iseg) = NsigeKe(1,iseg)/norm_stock
+        NsigeKe(2,iseg) = NsigeKe(2,iseg)/norm_stock
         !
      ELSE
         !
@@ -350,11 +356,14 @@ SUBROUTINE  meshtools
            NsigK(1,iseg) = - NsigK(1,iseg)
            NsigK(2,iseg) = - NsigK(2,iseg)
         END IF
+        norm_stock = sqrt(NsigK(1,iseg)**2+NsigK(2,iseg)**2)
+        NsigK(1,iseg) = NsigK(1,iseg)/norm_stock
+        NsigK(2,iseg) = NsigK(2,iseg)/norm_stock
         !-------------------------------------------------------
         ! calcul du vecteur normal NsigeKe sortant de K* vers L*
         !-------------------------------------------------------
         NsigeKe(1,iseg) = -(y(4)-y(3)) ; NsigeKe(2,iseg) = x(4)-x(3)
-        ! ici on effectue le prouduit scalaire pour vérifier
+        ! ici on effectue le prouduit scalaire pour vï¿½rifier
         ! la direction de Nsigma*K*
         z = (x(2)-x(1))*NsigeKe(1,iseg) + (y(2)-y(1))*NsigeKe(2,iseg)
         !
@@ -363,6 +372,9 @@ SUBROUTINE  meshtools
            NsigeKe(1,iseg) = - NsigeKe(1,iseg) 
            NsigeKe(2,iseg) = - NsigeKe(2,iseg)
         END IF
+        norm_stock = sqrt(NsigeKe(1,iseg)**2+NsigeKe(2,iseg)**2)
+        NsigeKe(1,iseg) = NsigeKe(1,iseg)/norm_stock
+        NsigeKe(2,iseg) = NsigeKe(2,iseg)/norm_stock
      END IF
   END DO
   !! -------------------------------------------------------
@@ -498,9 +510,10 @@ SUBROUTINE  meshtools
         WRITE(uprint,114) iseg , (NuSeg(j,iseg),j=1,2), (NumTVoisSeg(j,iseg),j=1,2)
      END DO
      write(uprint,*)' '
-     write(uprint,*)'  Nseg , (NsigK(j,iseg),j=1,2), (NsigeKe(j,iseg),j=1,2) '
+     write(uprint,*)'  Nseg , (NsigK(j,iseg),j=1,2), norm(NsigK), (NsigeKe(j,iseg),j=1,2), norm(NsigeKe) '
      DO iseg=1,Nseg
-        WRITE(uprint,115) iseg , (NsigK(j,iseg),j=1,2), (NsigeKe(j,iseg),j=1,2)
+        WRITE(uprint,115) iseg , (NsigK(j,iseg),j=1,2), sqrt(NsigK(1,iseg)**2+NsigK(2,iseg)**2), &
+        & (NsigeKe(j,iseg),j=1,2), sqrt(NsigeKe(1,iseg)**2+NsigeKe(2,iseg)**2)
      END DO
   ENDIF
 

@@ -17,7 +17,7 @@ contains
     Real(kind=long), dimension(:), allocatable :: WW
     Integer, dimension(:,:), allocatable       :: NuSoDiam
 
-    print*,"Creation du fichier d'impression"
+    !print*,"Creation du fichier d'impression"
     uplotvtk = 16
     FPLOTVTK = chaine//'.vtk'
 
@@ -55,7 +55,7 @@ contains
           countk = countk+1
        end if
     END DO
-    write(*,*)'nb seg bord via plot est ', countk
+    !write(*,*)'nb seg bord via plot est ', countk
     ! 1.2. Definir le numero de sommets des diamants: NuSoDiam (1:4, Nseg+Nbt) 
     !--------------------------------------------------------------------------
 
@@ -132,8 +132,8 @@ contains
     END DO
     deallocate(WW)
     close (uplotvtk)
-    print*,"OK"
-    print*," "
+    !print*,"OK"
+    !print*," "
 
       500 format (E30.20)
 
@@ -149,7 +149,7 @@ contains
    Real(kind=long), dimension(:), allocatable :: WW
    Integer, dimension(:,:), allocatable       :: NuSoDiam
 
-   print*,"Creation du fichier d'impression"
+   !print*,"Creation du fichier d'impression"
    uplotvtk = 30
    FPLOTVTK = chaine//'.vtk'
 
